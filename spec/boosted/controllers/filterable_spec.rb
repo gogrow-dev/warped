@@ -1,87 +1,110 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-
-require "boosted/controllers/filterable"
-
-RSpec.describe Boosted::Controllers::Filterable do
-  let(:dummy_controller) { Class.new { include Boosted::Controllers::Filterable } }
-  let(:dummy_instance) { dummy_controller.new }
-  let(:dummy_scope) { double }
+RSpec.describe Boosted::Controllers::Filterable, type: :controller do
+  let(:scope) { double("ActiveRecord::Relation") }
 
   before do
-    allow(dummy_instance).to receive(:request) {
-                               double(parameters: { "name_eq" => "John", "age_gteq" => "20",
-                                                    "without_operator" => "foo", "not_allowed_like" => "bar" })
-                             }
+    stub_const("TestModel", double("TestModel"))
+    allow(TestModel).to receive(:all).and_return(scope)
+    allow(Boosted::Queries::Filter).to receive(:call).with(scope, filter_conditions: anything).and_return(scope)
+
+    controller do
+      include Boosted::Controllers::Filterable
+
+      def index
+        _test_models = filter(TestModel.all)
+      end
+    end
   end
 
-  describe "#filter" do
-    context "when filterable_by is empty" do
-      it "returns the dummy_scope" do
-        allow(dummy_instance).to receive(:filterable_by) { [] }
-        expect(dummy_instance.filter(dummy_scope)).to eq(dummy_scope)
+  describe "MockController#index" do
+    let(:params) { {} }
+    subject(:request) { call_action(MockController, :index, params:) }
+
+    context "when no filterable fields are defined" do
+      it "calls Boosted::Queries::Filter with correct params" do
+        request
+        expect(Boosted::Queries::Filter).to have_received(:call).with(scope, filter_conditions: [])
       end
     end
 
-    context "when filterable_by is not empty" do
+    context "when filterable fields are defined" do
       before do
-        allow(dummy_instance).to receive(:filterable_by) { %w[name age] }
-        allow(dummy_scope).to receive(:where) { dummy_scope }
+        MockController.filterable_by :email, "users.created_at" => "signed_up_at", updated_at: "last_updated_at"
       end
 
-      it "filters the dummy_scope by the provided filters" do
-        expect(dummy_scope).to receive(:where).with("name = (?)", "John")
-        expect(dummy_scope).to receive(:where).with("age >= (?)", "20")
-        dummy_instance.filter(dummy_scope)
+      context "when passing non mapped filter names" do
+        let(:params) { { email: "sample@test.com" } }
+
+        it "calls Boosted::Queries::Filter with correct params" do
+          request
+          expect(Boosted::Queries::Filter).to have_received(:call).with(scope,
+                                                                        filter_conditions: [
+                                                                          {
+                                                                            field: :email,
+                                                                            value: "sample@test.com",
+                                                                            relation: "="
+                                                                          }
+                                                                        ])
+        end
       end
 
-      it "returns the filtered dummy_scope" do
-        expect(dummy_instance.filter(dummy_scope)).to eq(dummy_scope)
+      context "when passing mapped filter names" do
+        let(:params) do
+          { "signed_up_at" => "2020-01-01", "signed_up_at.rel" => ">=", "last_updated_at" => "2020-01-01",
+            "last_updated_at.rel": "<=" }
+        end
+
+        it "calls Boosted::Queries::Filter with correct params" do
+          request
+          expect(Boosted::Queries::Filter).to have_received(:call).with(scope,
+                                                                        filter_conditions: [
+                                                                          {
+                                                                            field: "users.created_at",
+                                                                            value: "2020-01-01",
+                                                                            relation: ">="
+                                                                          },
+                                                                          {
+                                                                            field: :updated_at,
+                                                                            value: "2020-01-01",
+                                                                            relation: "<="
+                                                                          }
+                                                                        ])
+        end
       end
-    end
-  end
 
-  describe "#filtering_params" do
-    it "returns a hash of the parameters that are filterable" do
-      allow(dummy_instance).to receive(:filterable_by) { %w[name age] }
-      expect(dummy_instance.send(:filtering_params)).to eq({ "name_eq" => "John", "age_gteq" => "20" })
-    end
-  end
+      context "when using is_null" do
+        let(:params) { { "email.rel" => "is_null" } }
 
-  describe "#contains_operator?" do
-    let(:operator) { "_eq" }
+        it "calls Boosted::Queries::Filter with correct params" do
+          request
+          expect(Boosted::Queries::Filter).to have_received(:call).with(scope,
+                                                                        filter_conditions: [
+                                                                          {
+                                                                            field: :email,
+                                                                            value: nil,
 
-    it "returns true if the key contains an operator" do
-      expect(dummy_instance.send(:contains_operator?, "name#{operator}")).to eq(true)
-    end
+                                                                            relation: "is_null"
+                                                                          }
+                                                                        ])
+        end
+      end
 
-    it "returns false if the key does not contain an operator" do
-      expect(dummy_instance.send(:contains_operator?, "name")).to eq(false)
-    end
-  end
+      context "when using is_not_null" do
+        let(:params) { { "email.rel" => "is_not_null" } }
 
-  describe "#extract_param" do
-    let(:operator) { "_eq" }
-
-    it "extracts the parameter name from the key" do
-      expect(dummy_instance.send(:extract_param, "name#{operator}", true)).to eq("name")
-    end
-
-    it "returns the key if it does not contain an operator" do
-      expect(dummy_instance.send(:extract_param, "name", false)).to eq("name")
-    end
-  end
-
-  describe "#extract_operator" do
-    let(:operator) { "_eq" }
-
-    it "extracts the operator from the key" do
-      expect(dummy_instance.send(:extract_operator, "name#{operator}", true)).to eq("eq")
-    end
-
-    it "returns nil if the key does not contain an operator" do
-      expect(dummy_instance.send(:extract_operator, "name", false)).to be_nil
+        it "calls Boosted::Queries::Filter with correct params" do
+          request
+          expect(Boosted::Queries::Filter).to have_received(:call).with(scope,
+                                                                        filter_conditions: [
+                                                                          {
+                                                                            field: :email,
+                                                                            value: nil,
+                                                                            relation: "is_not_null"
+                                                                          }
+                                                                        ])
+        end
+      end
     end
   end
 end

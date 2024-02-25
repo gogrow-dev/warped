@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary = "Set of modules to boost your Ruby on Rails development"
   spec.homepage = "https://github.com/gogrow-dev/boosted"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 3.1.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/gogrow-dev/boosted"
@@ -27,4 +27,7 @@ Gem::Specification.new do |spec|
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
+
+  spec.add_dependency "rails", ">= 6.0", "< 8.0"
+  spec.add_dependency "zeitwerk", ">= 2.4"
 end

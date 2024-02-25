@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.6
+  TargetRubyVersion: 3.1.0
   NewCops: enable
 
 Style/Documentation:
@@ -19,3 +19,10 @@ Layout/LineLength:
 Metrics/BlockLength:
   Exclude:
     - "spec/**/*"
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - "lib/boosted/queries/filter.rb"
+
+Metrics/MethodLength:
+  Max: 20

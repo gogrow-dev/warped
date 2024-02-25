@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
-require_relative "boosted/version"
+require "active_support/configurable"
+require "zeitwerk"
+loader = Zeitwerk::Loader.for_gem
+loader.setup
 
 module Boosted
-  class Error < StandardError; end
-  # Your code goes here...
+  include ActiveSupport::Configurable
+
+  config_accessor :base_job_parent_class, instance_accessor: false, default: "ActiveJob::Base"
 end

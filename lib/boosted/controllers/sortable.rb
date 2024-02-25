@@ -1,68 +1,114 @@
 # frozen_string_literal: true
 
+require "active_support/concern"
+require "active_support/core_ext/class/attribute"
+
 module Boosted
   module Controllers
-    # Boosted::Controllers::Sortable concern to add sorting support to any endpoint
-    #  class PostsController < ApplicationController
-    #    include Boosted::Controllers::Sortable
-    #    sortable_by :title, :content
-    #  end
+    # Provides functionality for sorting records from an ActiveRecord::Relation.
     #
-    # Then in your request you can add the following params:
-    #  GET /posts?title_sort=desc&content_sort=asc
+    # Example usage:
     #
-    # Filtering by associations is also possible:
-    #  class Post < ApplicationRecord
-    #    belongs_to :user
-    #  end
+    #   class UsersController < ApplicationController
+    #     include Sortable
     #
-    #  class User < ApplicationRecord
-    #    has_many :posts
-    #  end
+    #     sortable_by :name, :created_at, 'accounts.kind'
     #
-    #  class PostsController < ApplicationController
-    #    include Boosted::Controllers::Sortable
-    #    sortable_by :title, :content, 'users.name'
-    #  end
+    #     def index
+    #       scope = sort(User.joins(:account))
+    #       render json: scope
+    #     end
+    #   end
     #
-    #  GET /posts?users.name_sort=desc&title_sort=asc
+    # Example requests:
+    #   GET /users?sort_key=name
+    #   GET /users?sort_key=name&sort_direction=asc_nulls_first
+    #   GET /users?sort_key=created_at&sort_direction=asc
+    #
+    # Renaming sort keys:
+    #
+    # In some cases, you may not want to expose the actual column names to the client.
+    # In such cases, you can rename the sort keys by passing a hash to the +sortable_by+ method.
+    #
+    # Example:
+    #
+    #   class UsersController < ApplicationController
+    #     include Sortable
+    #
+    #     sortable_by :name, :created_at, 'accounts.referrals_count' => 'referrals'
+    #
+    #     def index
+    #       scope = sort(User.joins(:account))
+    #       render json: scope
+    #     end
+    #   end
+    #
+    # Example requests:
+    #   GET /users?sort_key=referrals&sort_direction=asc
+    #
+    # The +sort_key+ and +sort_direction+ parameters are optional. If not provided, the default sort key and direction
+    # will be used.
+    #
+    # The default sort key and sort direction can be set at a controller level using the +default_sort_direction+ and
+    # +default_sort_key+ class attributes.
     module Sortable
-      module ClassMethods
-        def sortable_by(*args)
-          str_args = args.map(&:to_s)
+      extend ActiveSupport::Concern
 
-          define_method :sortable_by do
-            @sortable_by ||= str_args
-          end
+      included do
+        class_attribute :sort_fields, default: []
+        class_attribute :mapped_sort_fields, default: {}
+        class_attribute :default_sort_key, default: :id
+        class_attribute :default_sort_direction, default: :desc
+      end
 
-          str_args
+      class_methods do
+        # @param keys [Array<Symbol,String>]
+        # @param mapped_keys [Hash<Symbol,String>]
+        def sortable_by(*keys, **mapped_keys)
+          self.sort_fields = keys.map(&:to_s)
+          self.mapped_sort_fields = mapped_keys.with_indifferent_access
         end
       end
 
-      def self.included(base)
-        base.extend ClassMethods
-        base.class_eval do
-          attr_writer :sortable_by
-        end
+      # @param scope [ActiveRecord::Relation] The scope to sort.
+      # @param sort_key [String, Symbol] The sort key.
+      # @param sort_direction [String, Symbol] The sort direction.
+      # @return [ActiveRecord::Relation]
+      def sort(scope, sort_key: self.sort_key, sort_direction: self.sort_direction)
+        return scope unless sort_key && sort_direction
+
+        validate_sort_key!
+
+        Queries::Sort.call(scope, sort_key:, sort_direction:)
       end
 
-      def sort(scope)
-        return scope if sorting_params.empty?
+      protected
 
-        sorting_params.each do |sort, direction|
-          column = sort.gsub(/_sort/, "")
-          parsed_direction = direction == "desc" ? :desc : :asc
-
-          scope = scope.order(column => parsed_direction)
-        end
-
-        scope
+      # @return [Symbol] The sort direction.
+      def sort_direction
+        @sort_direction ||= params[:sort_direction] || self.class.default_sort_direction
       end
 
-      def sorting_params
-        @sorting_params ||= request.parameters.select do |k, _|
-          sortable_by.any? { |f| k.to_s.match?(/^#{f}_sort/) }
-        end
+      def sort_key
+        @sort_key ||= self.class.mapped_sort_fields.key(params[:sort_key]).presence ||
+                      params[:sort_key] ||
+                      self.class.default_sort_key
+      end
+
+      private
+
+      def validate_sort_key!
+        return if valid_sort_key?
+
+        possible_values = self.class.sort_fields + self.class.mapped_sort_fields.values
+        message = "Invalid sort key: #{sort_key}, must be one of #{possible_values}"
+        raise ActionController::BadRequest, message
+      end
+
+      def valid_sort_key?
+        sort_key == self.class.default_sort_key ||
+          self.class.sort_fields.include?(sort_key) ||
+          self.class.mapped_sort_fields[sort_key].present?
       end
     end
   end

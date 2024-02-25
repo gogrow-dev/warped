@@ -2,6 +2,6 @@
 
 RSpec.describe Boosted do
   it "has a version number" do
-    expect(Boosted::VERSION).not_to be nil
+    expect(Boosted::VERSION).to eq("0.1.0")
   end
 end

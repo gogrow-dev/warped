@@ -1,69 +1,78 @@
-require "spec_helper"
+# frozen_string_literal: true
 
-require "boosted/controllers/sortable"
-
-RSpec.describe Boosted::Controllers::Sortable do
-  let(:dummy_controller) { Class.new { include Boosted::Controllers::Sortable } }
-  let(:dummy_instance) { dummy_controller.new }
-  let(:dummy_scope) { double("DummyScope") }
+RSpec.describe Boosted::Controllers::Sortable, type: :controller do
+  let(:scope) { double("ActiveRecord::Relation") }
 
   before do
-    allow(dummy_instance).to receive(:request) {
-                               double(parameters: { "title_sort" => "asc", "author_sort" => "desc" })
-                             }
-  end
+    stub_const("TestModel", double("TestModel"))
+    allow(TestModel).to receive(:all).and_return(scope)
+    allow(Boosted::Queries::Sort).to receive(:call).with(scope, sort_key: anything,
+                                                                sort_direction: anything).and_return(scope)
 
-  describe ".sortable_by" do
-    context "when sortable_by is called with valid arguments" do
-      it "defines the sortable_by method" do
-        dummy_controller.sortable_by(:title, :content)
-        expect(dummy_controller.method_defined?(:sortable_by)).to be_truthy
-      end
+    controller do
+      include Boosted::Controllers::Sortable
 
-      it "returns an array of string arguments" do
-        result = dummy_controller.sortable_by(:title, :content)
-        expect(result).to contain_exactly("title", "content")
-      end
-    end
-
-    context "when sortable_by is called multiple times" do
-      it "does not redefine the sortable_by method" do
-        dummy_controller.sortable_by(:title)
-        dummy_controller.sortable_by(:content)
-        expect(dummy_controller.method_defined?(:sortable_by)).to be_truthy
+      def index
+        _test_models = sort(TestModel.all)
       end
     end
   end
 
-  describe "#sort" do
-    it "returns the scope unchanged if no sorting params are present" do
-      allow(dummy_instance).to receive(:sorting_params).and_return({})
-      expect(dummy_instance.sort(dummy_scope)).to eq(dummy_scope)
+  describe "MockController#index" do
+    let(:params) { {} }
+    subject(:request) { call_action(MockController, :index, params:) }
+
+    context "when no sortable fields are defined" do
+      it "calls Boosted::Queries::Sort with correct params" do
+        request
+        expect(Boosted::Queries::Sort).to have_received(:call).with(scope, sort_key: :id, sort_direction: :desc)
+      end
     end
 
-    it "orders the scope based on the sorting params" do
-      dummy_controller.sortable_by(:title, :content)
-      allow(dummy_instance).to receive(:sorting_params).and_return({ "title_sort" => "asc" })
+    context "when sortable fields are defined" do
+      before do
+        MockController.sortable_by :email, "users.created_at" => "signed_up_at", updated_at: "last_updated_at"
+      end
 
-      expect(dummy_scope).to receive(:order).with("title" => :asc).and_return(dummy_scope)
-      dummy_instance.sort(dummy_scope)
-    end
-  end
+      let(:sort_direction) { %w[asc desc asc_nulls_first asc_nulls_last desc_nulls_first desc_nulls_last].sample }
 
-  describe "#sorting_params" do
-    it "returns an empty hash if no sortable params are present" do
-      allow(dummy_instance).to receive(:request).and_return(double("Request", parameters: {}))
-      expect(dummy_instance.sorting_params).to be_empty
-    end
+      context "when passing non mapped sort names" do
+        let(:params) { { sort_key: "email", sort_direction: } }
 
-    it "returns a hash of sortable params" do
-      allow(dummy_instance).to receive(:sortable_by).and_return(%w[title content])
-      allow(dummy_instance).to receive(:request).and_return(double("Request", parameters: {
-                                                                     "title_sort" => "asc",
-                                                                     "author_sort" => "desc"
-                                                                   }))
+        it "calls Boosted::Queries::Sort with correct params" do
+          request
 
-      expect(dummy_instance.sorting_params).to eq({ "title_sort" => "asc" })
+          expect(Boosted::Queries::Sort).to have_received(:call).with(scope, sort_key: "email", sort_direction:)
+        end
+      end
+
+      context "when passing mapped sort names" do
+        let(:params) { { sort_key: "signed_up_at", sort_direction: } }
+
+        it "calls Boosted::Queries::Sort with correct params" do
+          request
+          expect(Boosted::Queries::Sort).to have_received(:call).with(scope, sort_key: "users.created_at",
+                                                                             sort_direction:)
+        end
+      end
+
+      context "when sort_direction is not passed" do
+        let(:params) { { sort_key: "last_updated_at" } }
+
+        it "calls Boosted::Queries::Sort with correct params" do
+          request
+          expect(Boosted::Queries::Sort).to have_received(:call).with(scope, sort_key: "updated_at",
+                                                                             sort_direction: :desc)
+        end
+      end
+
+      context "when a non existing sort key is passed" do
+        let(:params) { { sort_key: "non_existing_key" } }
+
+        it "raises an ActionController::BadRequest error" do
+          expect { request }.to raise_error(ActionController::BadRequest).with_message(anything)
+        end
+      end
     end
   end
 end

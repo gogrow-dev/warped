@@ -1,8 +1,14 @@
 # frozen_string_literal: true
 
 require "boosted"
+require "rails"
+require "debug"
+require "request_helper"
 
 RSpec.configure do |config|
+  # require active job
+  require "active_job"
+
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"
 
@@ -12,4 +18,6 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.include RequestHelper, type: :controller
 end

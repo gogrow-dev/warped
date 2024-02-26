@@ -76,16 +76,6 @@ module Boosted
         paginate(scope)
       end
 
-      # @return [Array]
-      def tabulate_fields
-        self.class.tabulate_fields
-      end
-
-      # @return [Array]
-      def mapped_tabulate_fields
-        self.class.mapped_tabulate_fields
-      end
-
       # @return [Hash]
       def tabulate_info
         {

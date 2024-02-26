@@ -86,13 +86,13 @@ module Boosted
 
       # @return [Symbol] The sort direction.
       def sort_direction
-        @sort_direction ||= params[:sort_direction] || self.class.default_sort_direction
+        @sort_direction ||= params[:sort_direction] || default_sort_direction
       end
 
       def sort_key
-        @sort_key ||= self.class.mapped_sort_fields.key(params[:sort_key]).presence ||
+        @sort_key ||= mapped_sort_fields.key(params[:sort_key]).presence ||
                       params[:sort_key] ||
-                      self.class.default_sort_key
+                      default_sort_key
       end
 
       private
@@ -100,15 +100,15 @@ module Boosted
       def validate_sort_key!
         return if valid_sort_key?
 
-        possible_values = self.class.sort_fields + self.class.mapped_sort_fields.values
+        possible_values = sort_fields + mapped_sort_fields.values
         message = "Invalid sort key: #{sort_key}, must be one of #{possible_values}"
         raise ActionController::BadRequest, message
       end
 
       def valid_sort_key?
-        sort_key == self.class.default_sort_key ||
-          self.class.sort_fields.include?(sort_key) ||
-          self.class.mapped_sort_fields[sort_key].present?
+        sort_key == default_sort_key ||
+          sort_fields.include?(sort_key) ||
+          mapped_sort_fields[sort_key].present?
       end
     end
   end

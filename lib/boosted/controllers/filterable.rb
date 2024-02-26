@@ -58,7 +58,8 @@ module Boosted
     # - greater than
     # - less than
     # - not equal
-    # To see the full list of operands, check the `Boosted::Queries::Filter::RELATIONS` constant.
+    # @see Boosted::Queries::Filter::RELATIONS
+    # To see the full list of operands, check the +Boosted::Queries::Filter::RELATIONS+ constant.
     #
     # To use the operands, you must pass a parameter appended with `.rel`, and the value of a valid operand.
     #
@@ -101,7 +102,6 @@ module Boosted
       end
 
       # @param fields [Array<Symbol,String>]
-      # @param mapped_fields [Array<Hash<Symbol,String>>]
       # @return [Array<Hash>]
       def filter_conditions(*fields)
         fields.filter_map do |filter_opt|
@@ -115,16 +115,6 @@ module Boosted
             relation: filter_rel_value(filter_opt).presence || (filter_value(filter_opt).is_a?(Array) ? "in" : "=")
           }
         end
-      end
-
-      # @return [Array]
-      def filter_fields
-        self.class.filter_fields
-      end
-
-      # @return [Array]
-      def mapped_filter_fields
-        self.class.mapped_filter_fields
       end
 
       private

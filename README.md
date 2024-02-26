@@ -1,23 +1,23 @@
-# Boosted
+# Warped
 
-Develop rails applications at the speed of thought. Boosted is a collection of tools and utilities that make it easier to develop rails applications.
+Develop rails applications at the speed of thought. Warped is a collection of tools and utilities that make it easier to develop rails applications.
 
 
 ## Installation
 
 Install the gem and add to the Rails application's Gemfile by executing:
 
-    $ bundle add boosted-rails
+    $ bundle add warped-rails
 
 Then run the generator to create the configuration file:
 
-    $ rails generate boosted:install
+    $ rails generate warped:install
 
-The generator will create a file at `config/initializers/boosted.rb` with the default configuration.
+The generator will create a file at `config/initializers/warped.rb` with the default configuration.
 
 ## Usage
 
-Boosted provides utilities for making it easier to develop rails applications. The utilities are organized into modules and can be used by including the module in the class that needs the utility.
+Warped provides utilities for making it easier to develop rails applications. The utilities are organized into modules and can be used by including the module in the class that needs the utility.
 The utilities are organized in concepts used by most rails applications:
 - [Controllers](#controllers)
 - [Services](#services)
@@ -25,21 +25,21 @@ The utilities are organized in concepts used by most rails applications:
 
 ### Controllers
 
-The `Boosted::Controllers` module defines five concerns that can be included in a controller to provide additional functionality:
-- [Boosted::Controllers::Filterable](#boostedcontrollersfilterable)
-- [Boosted::Controllers::Searchable](#boostedcontrollersearchable)
-- [Boosted::Controllers::Sortable](#boostedcontrollerssortable)
-- [Boosted::Controllers::Paginatable](#boostedcontrollerspaginatable)
-- [Boosted::Controllers::Tabulatable](#boostedcontrollerstabulatable)
+The `Warped::Controllers` module defines five concerns that can be included in a controller to provide additional functionality:
+- [Warped::Controllers::Filterable](#warpedcontrollersfilterable)
+- [Warped::Controllers::Searchable](#warpedcontrollersearchable)
+- [Warped::Controllers::Sortable](#warpedcontrollerssortable)
+- [Warped::Controllers::Paginatable](#warpedcontrollerspaginatable)
+- [Warped::Controllers::Tabulatable](#warpedcontrollerstabulatable)
 
-#### Boosted::Controllers::Filterable
+#### Warped::Controllers::Filterable
 
 The `Filterable` concern provides a method to filter the records in a controller's action.
 The method `filterable_by` is used to define the filterable fields and the filter method to use.
 
 ```ruby
 class UsersController < ApplicationController
-  include Boosted::Controllers::Filterable
+  include Warped::Controllers::Filterable
 
   filterable_by :name, :email, :created_at
 
@@ -63,7 +63,7 @@ The `filterable_by` method can also be used to reference fields in associated ta
 
 ```ruby
 class UsersController < ApplicationController
-  include Boosted::Controllers::Filterable
+  include Warped::Controllers::Filterable
 
   filterable_by :name, :email, :created_at, 'companies.name'
 
@@ -87,7 +87,7 @@ you can specify the query parameter to use for each field:
 
 ```ruby
 class UsersController < ApplicationController
-  include Boosted::Controllers::Filterable
+  include Warped::Controllers::Filterable
 
   filterable_by 'companies.name' => :company_name, 'users.name' => :user_name
 
@@ -110,7 +110,7 @@ By default, the `filter` method will use the `eq` filter method to filter the re
 
 ```ruby
 class UsersController < ApplicationController
-  include Boosted::Controllers::Filterable
+  include Warped::Controllers::Filterable
 
   filterable_by :name, :age
 
@@ -147,7 +147,7 @@ The full list of filter relations is:
 - `is_null` - is null (does not require a value)
 - `is_not_null` - is not null (does not require a  value)
 
-#### Boosted::Controllers::Searchable
+#### Warped::Controllers::Searchable
 
 The `Searchable` concern provides a method to search the records in a controller's action.
 
@@ -166,7 +166,7 @@ end
 
 # app/controllers/users_controller.rb
 class UsersController < ApplicationController
-  include Boosted::Controllers::Searchable
+  include Warped::Controllers::Searchable
 
   def index
     users = search(User.all)
@@ -188,7 +188,7 @@ You can customize the default query parameter by:
 
 ```ruby
 class UsersController < ApplicationController
-  include Boosted::Controllers::Searchable
+  include Warped::Controllers::Searchable
 
   def index
     # This will use the query parameter `term` instead of `q`
@@ -202,7 +202,7 @@ end
 
 ```ruby
 class UsersController < ApplicationController
-  include Boosted::Controllers::Searchable
+  include Warped::Controllers::Searchable
 
   def index
     # This will use the query parameter `term` instead of `q`
@@ -230,7 +230,7 @@ end
 
 # app/controllers/users_controller.rb
 class UsersController < ApplicationController
-  include Boosted::Controllers::Searchable
+  include Warped::Controllers::Searchable
 
   # This will use the query parameter `term` instead of `q`
   # and the search scope `search_by_word` instead of the default
@@ -243,7 +243,7 @@ class UsersController < ApplicationController
 end
 ```
 
-#### Boosted::Controllers::Sortable
+#### Warped::Controllers::Sortable
 
 The `Sortable` concern provides a method to sort the records in a controller's action.
 
@@ -251,7 +251,7 @@ The method `sortable_by` is used to define the sortable fields.
 
 ```ruby
 class UsersController < ApplicationController
-  include Boosted::Controllers::Sortable
+  include Warped::Controllers::Sortable
 
   sortable_by :name, :created_at
 
@@ -276,7 +276,7 @@ When calling sort in a controller action, and the sort parameters are not provid
 
 ```ruby
 class UsersController < ApplicationController
-  include Boosted::Controllers::Sortable
+  include Warped::Controllers::Sortable
 
   sortable_by :name, :created_at
 
@@ -297,7 +297,7 @@ Like the `filterable_by` method, the `sortable_by` method can also be used to re
 
 ```ruby
 class UsersController < ApplicationController
-  include Boosted::Controllers::Sortable
+  include Warped::Controllers::Sortable
 
   sortable_by :name, 'companies.name'
 
@@ -321,7 +321,7 @@ you can specify the query parameter to use for each field:
 
 ```ruby
 class UsersController < ApplicationController
-  include Boosted::Controllers::Sortable
+  include Warped::Controllers::Sortable
 
   sortable_by 'companies.name' => :company_name, 'users.name' => :user_name
 
@@ -338,7 +338,7 @@ GET /users?sort_key=user_name # sort by name in descending order
 GET /users?sort_key=company_name&sort_direction=asc # sort by company name in ascending order
 ```
 
-#### Boosted::Controllers::Pageable
+#### Warped::Controllers::Pageable
 
 The `Pageable` concern provides a method to paginate the records in a controller's action.
 
@@ -347,7 +347,7 @@ It will use the query parameters `page` and `per_page` to paginate the records.
 
 ```ruby
 class UsersController < ApplicationController
-  include Boosted::Controllers::Pageable
+  include Warped::Controllers::Pageable
 
   def index
     users = paginate(User.all)
@@ -369,7 +369,7 @@ The `page_info` method can be used to access the pagination information.
 
 ```ruby
 class UsersController < ApplicationController
-  include Boosted::Controllers::Pageable
+  include Warped::Controllers::Pageable
 
   def index
     users = paginate(User.all)
@@ -397,7 +397,7 @@ You can customize the default page size and the default page number by overridin
 
 ```ruby
 class UsersController < ApplicationController
-  include Boosted::Controllers::Pageable
+  include Warped::Controllers::Pageable
 
   # This will set the default page size to 25 when the `per_page` query parameter is not provided
   self.default_per_page = 25
@@ -409,7 +409,7 @@ class UsersController < ApplicationController
 end
 ```
 
-#### Boosted::Controllers::Tabulatable
+#### Warped::Controllers::Tabulatable
 
 The `Tabulatable` concern provides a method to filter, sort, search, and paginate the records in a controller's action.
 
@@ -419,7 +419,7 @@ The tabulatable concern provides the `tabulatable_by` method, which passes the v
 
 ```ruby
 class UsersController < ApplicationController
-  include Boosted::Controllers::Tabulatable
+  include Warped::Controllers::Tabulatable
 
   tabulatable_by :name, :email, :created_at
 
@@ -440,10 +440,10 @@ Just like `paginate`, when calling the `tabulate` method in the controller actio
 
 ### Services
 
-The gem provides a `Boosted::Service::Base` class that can be used to create services in a rails application.
+The gem provides a `Warped::Service::Base` class that can be used to create services in a rails application.
 
 ```ruby
-class PrintService < Boosted::Service::Base
+class PrintService < Warped::Service::Base
   def call
     puts 'Hello, world!'
   end
@@ -453,7 +453,7 @@ end
 The `call` method is the entry point for the service. It can be overridden to provide the service's functionality.
 
 ```ruby
-class PrintService < Boosted::Service::Base
+class PrintService < Warped::Service::Base
   def call
     puts "Hello, #{name}!"
   end
@@ -476,7 +476,7 @@ PrintService.call # Executes new.call
 If you want to pass arguments to the service, you can so by defining the `initialize` method in the service class.
 
 ```ruby
-class PrintService < Boosted::Service::Base
+class PrintService < Warped::Service::Base
   def initialize(name = 'John')
     @name = name
   end
@@ -494,10 +494,10 @@ PrintService.call('world') # Executes new('world').call, prints "Hello, world!"
 
 ##### Using services as job classes in the background
 
-The `Boosted::Service::Base` class provides a class method `.enable_job!` that can be used to enable the service to be used as a job class.
+The `Warped::Service::Base` class provides a class method `.enable_job!` that can be used to enable the service to be used as a job class.
 
 ```ruby
-class PrintService < Boosted::Service::Base
+class PrintService < Warped::Service::Base
   enable_job!
 
   def call
@@ -506,7 +506,7 @@ class PrintService < Boosted::Service::Base
 end
 ```
 
-The `enable_job!` method will define a `PrintService::Job` class that inherits from `Boosted::Jobs::Base` and calls the `call` method on the service instance.
+The `enable_job!` method will define a `PrintService::Job` class that inherits from `Warped::Jobs::Base` and calls the `call` method on the service instance.
 
 ```ruby
 PrintService.call_later # Executes PrintService::Job.perform_later
@@ -522,23 +522,23 @@ PrintService::Job.perform_later('world') # Executes PrintService.new('world').ca
 
 ### Jobs
 
-The gem provides a `Boosted::Jobs::Base` class that can be used to create background jobs in a rails application.
+The gem provides a `Warped::Jobs::Base` class that can be used to create background jobs in a rails application.
 
 ```ruby
-class PrintJob < Boosted::Jobs::Base
+class PrintJob < Warped::Jobs::Base
   def perform
     puts 'Hello, world!'
   end
 end
 ```
 
-Boosted::Jobs::Base is a subclass of ActiveJob::Base, and can be used as a regular ActiveJob job.
+Warped::Jobs::Base is a subclass of ActiveJob::Base, and can be used as a regular ActiveJob job.
 
-The superclass can be overriden to inherit from a different job class, by changing it in the `config/initializers/boosted.rb` file.
+The superclass can be overriden to inherit from a different job class, by changing it in the `config/initializers/warped.rb` file.
 
 ```ruby
-# config/initializers/boosted.rb
-Boosted.configure do |config|
+# config/initializers/warped.rb
+Warped.configure do |config|
   config.job_superclass = 'ApplicationJob'
 end
 ```
@@ -552,7 +552,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/gogrow-dev/boosted. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/gogrow-dev/boosted/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/gogrow-dev/warped. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/gogrow-dev/warped/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
@@ -560,4 +560,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Boosted project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/gogrow-dev/boosted/blob/main/CODE_OF_CONDUCT.md).
+Everyone interacting in the Warped project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/gogrow-dev/warped/blob/main/CODE_OF_CONDUCT.md).

@@ -16,7 +16,7 @@ Style/StringLiteralsInInterpolation:
 Layout/LineLength:
   Max: 120
   Exclude:
-    - "lib/boosted/queries/paginate.rb"
+    - "lib/warped/queries/paginate.rb"
 
 Metrics/BlockLength:
   Exclude:
@@ -24,7 +24,7 @@ Metrics/BlockLength:
 
 Metrics/CyclomaticComplexity:
   Exclude:
-    - "lib/boosted/queries/filter.rb"
+    - "lib/warped/queries/filter.rb"
 
 Metrics/MethodLength:
   Max: 20

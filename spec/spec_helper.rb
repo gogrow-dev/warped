@@ -6,7 +6,6 @@ require "debug"
 require "request_helper"
 
 RSpec.configure do |config|
-  # require active job
   require "active_job"
 
   # Enable flags like --only-failures and --next-failure

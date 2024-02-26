@@ -3,7 +3,7 @@
 require_relative "lib/boosted/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "boosted"
+  spec.name = "boosted-rails"
   spec.version = Boosted::VERSION
   spec.authors = ["Juan Aparicio"]
   spec.email = ["apariciojuan30@gmail.com"]

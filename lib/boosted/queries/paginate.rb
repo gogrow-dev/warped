@@ -4,6 +4,19 @@ require "boosted/services/base"
 
 module Boosted
   module Queries
+    ##
+    # Paginate a scope
+    #
+    # This class provides a way to paginate a scope and return the metadata.
+    #
+    # @example
+    #   Boosted::Queries::Paginate.call(User.all, page: 2, per_page: 10)
+    #   # => [{ total_count: 100, total_pages: 10, next_page: 3, prev_page: 1, page: 2, per_page: 10 }, <ActiveRecord::Relation [...]>]
+    #
+    # @see MAX_PER_PAGE
+    # @see DEFAULT_PER_PAGE
+    # To see the maximum number of records per page and the default number of records per page,
+    # check the +MAX_PER_PAGE+ and +DEFAULT_PER_PAGE+ constants.
     class Paginate
       MAX_PER_PAGE = 100
       DEFAULT_PER_PAGE = 10

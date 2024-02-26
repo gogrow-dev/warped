@@ -5,7 +5,8 @@ require "active_support/core_ext/class/attribute"
 
 module Boosted
   module Controllers
-    # This module provides functionality for filtering, sorting, searching, and paginating a collection.
+    # Provides functionality for filtering, sorting, searching, and paginating records
+    # from an +ActiveRecord::Relation+ in a controller.
     #
     # Example usage:
     #

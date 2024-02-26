@@ -5,7 +5,7 @@ require "active_support/core_ext/class/attribute"
 
 module Boosted
   module Controllers
-    # Provides pagination functionality for controllers.
+    # Provides functionality for paginating records from an +ActiveRecord::Relation+ in a controller.
     #
     # Example usage:
     #

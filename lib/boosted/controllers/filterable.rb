@@ -6,7 +6,7 @@ require "active_support/core_ext/enumerable"
 
 module Boosted
   module Controllers
-    # Provides functionality for filtering records from an ActiveRecord::Relation.
+    # Provides functionality for filtering records from an +ActiveRecord::Relation+ in a controller.
     #
     # Example usage:
     #

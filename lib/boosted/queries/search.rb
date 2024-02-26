@@ -4,6 +4,22 @@ require "boosted/services/base"
 
 module Boosted
   module Queries
+    ##
+    # Search for records in a scope
+    #
+    # This class provides a way to search for records in a scope.
+    # It uses a scope in the model to perform the search.
+    #
+    # @example
+    #   Boosted::Queries::Search.call(User.all, search_term: "John")
+    #   # => #<ActiveRecord::Relation [...]>
+    #
+    # By default, it uses the +search+ scope in the model to perform the search.
+    # You can also specify a different scope to use for searching, like so:
+    # @example
+    #   Boosted::Queries::Search.call(User.all, search_term: "John", model_search_scope: :search_by_name)
+    #   # => #<ActiveRecord::Relation [...]>
+    #
     class Search
       # @param scope [ActiveRecord::Relation] the scope to search in
       # @param search_term [String] the term to search for

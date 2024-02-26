@@ -5,7 +5,7 @@ require "active_support/core_ext/class/attribute"
 
 module Boosted
   module Controllers
-    # Provides functionality for sorting records from an ActiveRecord::Relation.
+    # Provides functionality for sorting records from an +ActiveRecord::Relation+ in a controller.
     #
     # Example usage:
     #

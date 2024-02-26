@@ -4,6 +4,19 @@ require "boosted/services/base"
 
 module Boosted
   module Queries
+    ##
+    # Sorts a scope by a given key and direction
+    #
+    # This class provides a way to sort a scope by a given key and direction.
+    # It uses the +reorder+ method to sort the scope, so it will remove any existing order.
+    #
+    # @example Sort a scope by a key and direction
+    #   Boosted::Queries::Sort.call(User.all, sort_key: "name", sort_direction: "asc")
+    #   # => #<ActiveRecord::Relation [...]>
+    #
+    # @example Sort a scope by a key with format +table.column+ and direction
+    #   Boosted::Queries::Sort.call(User.join(:accounts), sort_key: "accounts.updated_at", sort_direction: "asc")
+    #   # => #<ActiveRecord::Relation [...]>
     class Sort
       SORT_DIRECTIONS = %w[asc desc].freeze
       NULLS_SORT_DIRECTION = %w[asc_nulls_first asc_nulls_last desc_nulls_first desc_nulls_last].freeze

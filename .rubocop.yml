@@ -1,6 +1,9 @@
 AllCops:
-  TargetRubyVersion: 2.6
+  TargetRubyVersion: 3.1.0
   NewCops: enable
+
+Style/Documentation:
+  Enabled: false
 
 Style/StringLiterals:
   Enabled: true
@@ -12,3 +15,16 @@ Style/StringLiteralsInInterpolation:
 
 Layout/LineLength:
   Max: 120
+  Exclude:
+    - "lib/boosted/queries/paginate.rb"
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - "lib/boosted/queries/filter.rb"
+
+Metrics/MethodLength:
+  Max: 20

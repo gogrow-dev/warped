@@ -93,9 +93,9 @@ module Boosted
 
       # @param scope [ActiveRecord::Relation]
       # @param filter_conditions [Array<Hash>]
-      # @param filter_conditions[:field] [Symbol,String]
-      # @param filter_conditions[:value] [String,Integer,Array<String,Integer>]
-      # @param filter_conditions[:relation] [String]
+      # @option filter_conditions [Symbol,String] :field
+      # @option filter_conditions [String,Integer,Array<String,Integer>] :value
+      # @option filter_conditions [String] :relation
       # @return [ActiveRecord::Relation]
       def filter(scope, filter_conditions: filter_conditions(*filter_fields, *mapped_filter_fields))
         Boosted::Queries::Filter.call(scope, filter_conditions:)

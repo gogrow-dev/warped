@@ -121,7 +121,7 @@ module Boosted
         # Sets the search scope.
         #
         # @param scope [Symbol] The name of the search scope.
-        def searchable_by(scope, param: :q)
+        def searchable_by(scope = model_search_scope, param: :q)
           self.model_search_scope = scope
           self.search_param = param
         end

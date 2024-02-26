@@ -25,7 +25,7 @@ module Boosted
     # @see RELATIONS
     # To see the list of available relations, check the +RELATIONS+ constant.
     class Filter
-      RELATIONS = %w[= != > >= < <= between in starts_with ends_with contains is_null is_not_null].freeze
+      RELATIONS = %w[= != > >= < <= between in not_in starts_with ends_with contains is_null is_not_null].freeze
 
       # @param scope [ActiveRecord::Relation] the scope to filter
       # @param filter_conditions [Array<Hash>] the conditions to filter by
@@ -68,7 +68,7 @@ module Boosted
         case relation
         when "=", "in"
           scope.where(field => value)
-        when "!="
+        when "!=", "not_in"
           scope.where.not(field => value)
         when "between"
           scope.where("#{field} BETWEEN ? AND ?", value.first, value.last)

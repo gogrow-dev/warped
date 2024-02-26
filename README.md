@@ -7,7 +7,7 @@ Develop rails applications at the speed of thought. Boosted is a collection of t
 
 Install the gem and add to the Rails application's Gemfile by executing:
 
-    $ bundle add boosted
+    $ bundle add boosted-rails
 
 Then run the generator to create the configuration file:
 
@@ -25,7 +25,7 @@ The utilities are organized in concepts used by most rails applications:
 
 ### Controllers
 
-The `Boosted::Controllers` module defines four concerns that can be included in a controller to provide additional functionality:
+The `Boosted::Controllers` module defines five concerns that can be included in a controller to provide additional functionality:
 - [Boosted::Controllers::Filterable](#boostedcontrollersfilterable)
 - [Boosted::Controllers::Searchable](#boostedcontrollersearchable)
 - [Boosted::Controllers::Sortable](#boostedcontrollerssortable)

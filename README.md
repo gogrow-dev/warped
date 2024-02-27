@@ -7,7 +7,7 @@ Develop rails applications at the speed of thought. Warped is a collection of to
 
 Install the gem and add to the Rails application's Gemfile by executing:
 
-    $ bundle add warped-rails
+    $ bundle add warped
 
 Then run the generator to create the configuration file:
 

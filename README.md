@@ -57,95 +57,7 @@ GET /users?email=john@example.com
 GET /users?created_at=2021-01-01
 ```
 
-##### Referencing tables in the filterable fields
-
-The `filterable_by` method can also be used to reference fields in associated tables. For example, to filter the users by the name of the company they work for, the following can be done:
-
-```ruby
-class UsersController < ApplicationController
-  include Warped::Controllers::Filterable
-
-  filterable_by :name, :email, :created_at, 'companies.name'
-
-  def index
-    users = filter(User.joins(:company))
-    render json: users
-  end
-end
-```
-
-Request examples:
-```
-GET /users?name=John
-GET /users?companies.name=Acme
-```
-
-##### Renaming the filter query parameters
-
-If you don't want to use the field name as the query parameter (as to not expose the database schema, or when joining the same table multiple times),
-you can specify the query parameter to use for each field:
-
-```ruby
-class UsersController < ApplicationController
-  include Warped::Controllers::Filterable
-
-  filterable_by 'companies.name' => :company_name, 'users.name' => :user_name
-
-  def index
-    users = filter(User.join(:company))
-    render json: users
-  end
-end
-```
-
-Request examples:
-```
-GET /users?user_name=John
-GET /users?company_name=Acme
-```
-
-##### Using filters other than `eq`
-
-By default, the `filter` method will use the `eq` filter method to filter the records. If you want to use a different filter method, you can specify the filter "relation" in the query parameter:
-
-```ruby
-class UsersController < ApplicationController
-  include Warped::Controllers::Filterable
-
-  filterable_by :name, :age
-
-  def index
-    users = filter(User.all)
-    render json: users
-  end
-end
-```
-
-Request examples:
-```
-GET /users?name=John # returns users with name John
-GET /users?name[]=John&name[]=Jane # returns users where the name is in ('John', 'Jane')
-GET /users?age.rel=is_null # returns users where the age is null
-GET /users?age.rel=is_not_null # returns users where the age is not null
-GET /users?age.rel=between&age[]=18&age[]=30 # returns users with age between 18 and 30
-GET /users?age.rel=%3E%0A&age=18 # returns users with age greater than 18, %3E%0A is url encoded for ">"
-```
-
-The full list of filter relations is:
-- `=` (default) - equals
-- `!=` - not equals
-- `>` - greater than
-- `>=` - greater than or equals
-- `<` - less than
-- `<=` - less than or equals
-- `between` - between (requires two values)
-- `in` - in (default when multiple values are provided)
-- `not_in` - not in (requires multiple values)
-- `starts_with` - starts with
-- `ends_with` - ends with
-- `contains` - contains
-- `is_null` - is null (does not require a value)
-- `is_not_null` - is not null (does not require a  value)
+[Complete documentation for Warped::Controllers::Filterable](docs/controllers/FILTERABLE.md).
 
 #### Warped::Controllers::Searchable
 
@@ -181,67 +93,7 @@ GET /users?q=John
 # calls #search(User.all, search_term: 'John', model_search_scope: :search) in the controller
 ```
 
-##### Customizing the search query parameter
-
-You can customize the default query parameter by:
-1. Passing fetching the fetch term from the params hash, and passing it directly to the search method:
-
-```ruby
-class UsersController < ApplicationController
-  include Warped::Controllers::Searchable
-
-  def index
-    # This will use the query parameter `term` instead of `q`
-    users = search(User.all, search_term: params[:term])
-    render json: users
-  end
-end
-```
-
-2. Overriding the `search_param` method in the controller
-
-```ruby
-class UsersController < ApplicationController
-  include Warped::Controllers::Searchable
-
-  def index
-    # This will use the query parameter `term` instead of `q`
-    users = search(User.all)
-    render json: users
-  end
-
-  private
-
-  def search_param
-    :term
-  end
-end
-```
-
-3. Calling #searchable_by in the controller and overriding the default query parameter
-
-```ruby
-# app/models/user.rb
-class User < ApplicationRecord
-  include PgSearch::Model
-  pg_search_scope :search_by_word, against: :name, using: { tsearch: { any_word: true } }
-end
-
-
-# app/controllers/users_controller.rb
-class UsersController < ApplicationController
-  include Warped::Controllers::Searchable
-
-  # This will use the query parameter `term` instead of `q`
-  # and the search scope `search_by_word` instead of the default
-  searchable_by :search_by_word, param: :term
-
-  def index
-    users = search(User.all)
-    render json: users
-  end
-end
-```
+[Complete documentation for Warped::Controllers::Searchable](docs/controllers/SEARCHABLE.md).
 
 #### Warped::Controllers::Sortable
 
@@ -291,52 +143,8 @@ Request examples:
 ```
 GET /users # sort by id in descending order
 ```
-##### Referencing tables in the sortable fields
 
-Like the `filterable_by` method, the `sortable_by` method can also be used to reference fields in associated tables.
-
-```ruby
-class UsersController < ApplicationController
-  include Warped::Controllers::Sortable
-
-  sortable_by :name, 'companies.name'
-
-  def index
-    users = sort(User.joins(:company))
-    render json: users
-  end
-end
-```
-
-Request examples:
-```
-GET /users?sort_key=name # sort by name in descending order
-GET /users?sort_key=companies.name&sort_direction=asc # sort by company name in ascending order
-```
-
-##### Renaming the sort query parameters
-
-If you don't want to use the field name as the query parameter (as to not expose the database schema, or when joining the same table multiple times),
-you can specify the query parameter to use for each field:
-
-```ruby
-class UsersController < ApplicationController
-  include Warped::Controllers::Sortable
-
-  sortable_by 'companies.name' => :company_name, 'users.name' => :user_name
-
-  def index
-    users = sort(User.join(:company))
-    render json: users
-  end
-end
-```
-
-Request examples:
-```
-GET /users?sort_key=user_name # sort by name in descending order
-GET /users?sort_key=company_name&sort_direction=asc # sort by company name in ascending order
-```
+[Complete documentation for Warped::Controllers::Sortable](docs/controllers/SORTABLE.md).
 
 #### Warped::Controllers::Pageable
 
@@ -363,51 +171,7 @@ GET /users?per_page=25 # returns the first page of users with 25 records per pag
 GET /users?page=2&per_page=25 # returns the second page of users with 25 records per page
 ```
 
-##### Accessing the pagination information
-
-The `page_info` method can be used to access the pagination information.
-
-```ruby
-class UsersController < ApplicationController
-  include Warped::Controllers::Pageable
-
-  def index
-    users = paginate(User.all)
-    render json: users, meta: page_info
-  end
-end
-```
-
-`page_info` returns a hash with
-- `page` - the current page
-- `per_page` - the number of records per page
-- `total_pages` - the total number of pages
-- `total_count` - the number of records in the scope
-- `next-page` - the next page number
-- `prev-page` - the previous page number
-
-
-##### Customizing the pagination behavior
-
-By default, the `paginate` method will paginate the scope in pages of size 10, and will return the first page if the `page` query parameter is not provided.
-
-Additionally, there's a limit of `100` records per page. So, if the `per_page` query parameter is greater than `100`, the pagination will use `100` as the page size.
-
-You can customize the default page size and the default page number by overriding the `default_per_page` value in the controller.
-
-```ruby
-class UsersController < ApplicationController
-  include Warped::Controllers::Pageable
-
-  # This will set the default page size to 25 when the `per_page` query parameter is not provided
-  self.default_per_page = 25
-
-  def index
-    users = paginate(User.all)
-    render json: users, meta: page_info
-  end
-end
-```
+[Complete documentation for Warped::Controllers::Pageable](docs/controllers/PAGEABLE.md).
 
 #### Warped::Controllers::Tabulatable
 
@@ -437,6 +201,8 @@ GET /users?age[]=18&age[]=30&age.rel=between&sort_key=name&sort_direction=asc&q=
 ```
 
 Just like `paginate`, when calling the `tabulate` method in the controller action, the `page_info` method can be used to access the pagination information.
+
+[Complete documentation for Warped::Controllers::Tabulatable](docs/controllers/TABULATABLE.md).
 
 ### Services
 
@@ -492,33 +258,7 @@ PrintService.call # Executes new.call, prints "Hello, John!"
 PrintService.call('world') # Executes new('world').call, prints "Hello, world!"
 ```
 
-##### Using services as job classes in the background
-
-The `Warped::Service::Base` class provides a class method `.enable_job!` that can be used to enable the service to be used as a job class.
-
-```ruby
-class PrintService < Warped::Service::Base
-  enable_job!
-
-  def call
-    puts 'Hello, world!'
-  end
-end
-```
-
-The `enable_job!` method will define a `PrintService::Job` class that inherits from `Warped::Jobs::Base` and calls the `call` method on the service instance.
-
-```ruby
-PrintService.call_later # Executes PrintService::Job.perform_later
-PrintService::Job.perform_later # Executes PrintService.new.call in the background
-```
-
-call_later and perform_later will pass the arguments to the `initialize` method of the service class, and then call the `call` method on the new instance.
-
-```ruby
-PrintService.call_later('world') # Executes PrintService::Job.perform_later('world')
-PrintService::Job.perform_later('world') # Executes PrintService.new('world').call in the background
-```
+[Complete documentation for Warped::Services](docs/services/README.md).
 
 ### Jobs
 
@@ -542,6 +282,8 @@ Warped.configure do |config|
   config.job_superclass = 'ApplicationJob'
 end
 ```
+
+[Complete documentation for Warped::Jobs](docs/jobs/README.md).
 
 
 ## Development

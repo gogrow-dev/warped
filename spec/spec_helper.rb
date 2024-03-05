@@ -2,7 +2,6 @@
 
 require "warped"
 require "rails"
-require "debug"
 require "request_helper"
 
 RSpec.configure do |config|

@@ -18,6 +18,10 @@ Layout/LineLength:
   Exclude:
     - "lib/warped/queries/paginate.rb"
 
+Metrics/AbcSize:
+  Exclude:
+    - "lib/warped/emails/components/**/*.rb"
+
 Metrics/BlockLength:
   Exclude:
     - "spec/**/*"
@@ -28,3 +32,8 @@ Metrics/CyclomaticComplexity:
 
 Metrics/MethodLength:
   Max: 20
+
+Style/OptionalArguments:
+  Exclude:
+    - lib/warped/emails/components/button.rb
+    - lib/warped/emails/components/link.rb

@@ -9,7 +9,7 @@ module Warped
       extend ActiveSupport::Concern
 
       included do
-        class_attribute :slots, default: { one: {}, many: {} }
+        class_attribute :slots, default: { one: {}, many: {} }, instance_accessor: false
       end
 
       class_methods do
@@ -56,6 +56,10 @@ module Warped
             end
           RUBY
         end
+      end
+
+      def slots
+        @slots ||= self.class.slots.deep_dup
       end
     end
   end

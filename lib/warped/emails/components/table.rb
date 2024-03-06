@@ -22,21 +22,14 @@ module Warped
       slots_one :header
       slots_many :rows
 
-      def initialize(content)
-        super()
-        @content = content
-      end
-
       def template
-        raise ArgumentError, "at least one row must be passed to the table" if rows_content.empty?
+        raise ArgumentError, "at least one row must be passed to the table" if rows.empty?
 
-        tag.table(style) do
-          concat tag.thead(header, style: header_style) if header.present?
-          if rows.any?
-            concat tag.tbody do
-              rows.each do |row|
-                concat tag.tr(row, style: row_style)
-              end
+        content_tag(:table, style:) do
+          concat content_tag(:thead, header, style: style(:header))
+          concat content_tag(:tbody) do
+            rows.each do |row|
+              concat content_tag(:tr, row, style: style(:row))
             end
           end
         end

@@ -4,19 +4,15 @@ module Warped
   module Emails
     class Heading < Base
       variant do
-        base do
-          ["font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif",
-           "font-weight: 400",
-           "color: #333"]
-        end
+        base { ["font-weight: 400"] }
 
         level do
-          h1 { "font-size: 32px; line-height: 40px" }
-          h2 { "font-size: 24px; line-height: 32px" }
-          h3 { "font-size: 20px; line-height: 28px" }
-          h4 { "font-size: 16px; line-height: 24px" }
-          h5 { "font-size: 14px; line-height: 20px" }
-          h6 { "font-size: 12px; line-height: 16px" }
+          h1 { ["font-size: 45px", "line-height: 50px"] }
+          h2 { ["font-size: 40px", "line-height: 45px"] }
+          h3 { ["font-size: 35px", "line-height: 40px"] }
+          h4 { ["font-size: 30px", "line-height: 35px"] }
+          h5 { ["font-size: 25px", "line-height: 30px"] }
+          h6 { ["font-size: 20px", "line-height: 25px"] }
         end
 
         align do
@@ -24,15 +20,25 @@ module Warped
           center { "text-align: center" }
           right  { "text-align: right" }
         end
+
+        color do
+          regular     { "color: #14181F" }
+          placeholder { "color: #8B939F" }
+          info        { "color: #1C51A4" }
+          success     { "color: #60830D" }
+          warning     { "color: #82620F" }
+          error       { "color: #AB2816" }
+        end
       end
 
-      default_variant level: :h1, align: :center
+      default_variant level: :h1, align: :center, color: :regular
 
-      def initialize(text = nil, level: :h1, align: :center)
+      def initialize(text = nil, level: :h1, align: :center, color: :regular)
         super()
         @text = text
         @level = level
         @align = align
+        @color = color
       end
 
       def text
@@ -40,14 +46,14 @@ module Warped
       end
 
       def template
-        style = style(level:, align:)
+        style = style(level:, align:, color:)
 
         tag.send(level, text, style:)
       end
 
       private
 
-      attr_reader :level, :align
+      attr_reader :level, :align, :color
     end
   end
 end

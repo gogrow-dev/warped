@@ -5,8 +5,7 @@ module Warped
     class Button < Base
       variant do
         base do
-          ["font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif",
-           "font-weight: 400",
+          ["font-weight: 400",
            "color: #333",
            "text-decoration: none",
            "display: inline-block",
@@ -25,9 +24,9 @@ module Warped
         end
 
         size do
-          sm { ["font-size: 12px", "padding: 4px 8px"] }
-          md { ["font-size: 14px", "padding: 6px 12px"] }
-          lg { ["font-size: 16px", "padding: 8px 16px"] }
+          sm { ["font-size: 13px", "padding: 6px 16px", "line-height: 16px"] }
+          md { ["font-size: 16px", "padding: 8px 24px", "line-height: 20px"] }
+          lg { ["font-size: 19px", "padding: 16px 28px", "line-height: 24px"] }
         end
       end
 

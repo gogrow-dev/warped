@@ -4,29 +4,31 @@ module Warped
   module Emails
     class Text < Base
       variant do
-        base { "font-family: Arial, sans-serif" }
-
         size do
-          sm { "font-size: 12px" }
-          md { "font-size: 14px" }
-          lg { "font-size: 16px" }
+          xs { ["font-size: 11px", "line-height: 16px"] }
+          sm { ["font-size: 13px", "line-height: 16px"] }
+          md { ["font-size: 16px", "line-height: 24px"] }
+          lg { ["font-size: 19px", "line-height: 24px"] }
         end
 
         color do
-          regular { "color: #333" }
-          muted { "color: #666666" }
+          regular     { "color: #414750" }
+          placeholder { "color: #8B939F" }
+          info        { "color: #1C51A4" }
+          success     { "color: #60830D" }
+          warning     { "color: #82620F" }
+          error       { "color: #AB2816" }
         end
 
         align do
-          left { "text-align: left" }
-          right { "text-align: right" }
+          left   { "text-align: left" }
+          right  { "text-align: right" }
           center { "text-align: center" }
         end
 
         weight do
-          light { "font-weight: lighter" }
-          regular { "font-weight: normal" }
-          bold { "font-weight: bold" }
+          regular  { "font-weight: 400" }
+          bold     { "font-weight: 700" }
         end
       end
 

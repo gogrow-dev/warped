@@ -64,7 +64,7 @@ module Warped
       end
 
       # @!visibility private
-      class VariantBuilder
+      class VariantBuilder < BasicObject
         delegate :variants, to: :@component
 
         def initialize(component, variant_name: :_base_variant, group_name: nil)
@@ -78,7 +78,7 @@ module Warped
         end
 
         def method_missing(name, &)
-          return super unless block_given?
+          return super unless ::Kernel.block_given?
 
           if !@group_name && name == :base
             _defin_base_style(&)
@@ -94,7 +94,7 @@ module Warped
         private
 
         def _define_variant_group(name, &)
-          self.class.new(@component, variant_name: @variant_name, group_name: name).compile_variants(&)
+          VariantBuilder.new(@component, variant_name: @variant_name, group_name: name).compile_variants(&)
         end
 
         def _define_subvariant(name, &block)

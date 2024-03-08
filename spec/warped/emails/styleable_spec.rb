@@ -15,8 +15,8 @@ RSpec.describe Warped::Emails::Styleable do
         is_expected.to eq({})
       end
 
-      it "sets the @default_variants" do
-        expect { subject }.to change { test_class.instance_variable_get(:@default_variants) }.from(nil).to({})
+      it "returns the @default_variants" do
+        expect(subject).to eq({})
       end
     end
 
@@ -41,8 +41,8 @@ RSpec.describe Warped::Emails::Styleable do
         is_expected.to eq({})
       end
 
-      it "sets the @base_styles" do
-        expect { subject }.to change { test_class.instance_variable_get(:@base_styles) }.from(nil).to({})
+      it "returns the @base_styles" do
+        expect(subject).to eq({})
       end
     end
 
@@ -68,7 +68,7 @@ RSpec.describe Warped::Emails::Styleable do
       end
 
       it "sets the @variants" do
-        expect { subject }.to change { test_class.instance_variable_get(:@variants) }.from(nil).to({})
+        expect(subject).to eq({})
       end
     end
 
@@ -220,6 +220,52 @@ RSpec.describe Warped::Emails::Styleable do
           expect(test_class.new.style(size: :md)).to eq("color: red; font-size: 114px")
         end
       end
+    end
+  end
+
+  describe "inheritance" do
+    before do
+      test_class.variant do
+        base { ["color: red"] }
+
+        color do
+          red { "color: red" }
+        end
+
+        size do
+          sm { "font-size: 12px" }
+        end
+      end
+      test_class.default_variant(size: :sm, color: :red)
+    end
+
+    let!(:child_class) do
+      Class.new(test_class) do
+        variant do
+          size do
+            lg { "font-size: 18px" }
+          end
+        end
+
+        default_variant(size: :lg)
+      end
+    end
+
+    it "inherits the default_variants" do
+      expect(test_class.default_variants[:_base_variant]).to eq({ size: :sm, color: :red })
+      expect(child_class.default_variants[:_base_variant]).to eq({ size: :lg, color: :red })
+    end
+
+    it "inherits the base_styles" do
+      expect(test_class.base_styles[:_base_variant].call).to eq(["color: red"])
+      expect(child_class.base_styles[:_base_variant].call).to eq(["color: red"])
+    end
+
+    it "inherits the variants" do
+      expect(test_class.variants[:_base_variant][:size][:sm].call).to eq("font-size: 12px")
+      expect(test_class.variants[:_base_variant][:size][:lg]).to be_nil
+      expect(child_class.variants[:_base_variant][:size][:sm].call).to eq("font-size: 12px")
+      expect(child_class.variants[:_base_variant][:size][:lg].call).to eq("font-size: 18px")
     end
   end
 end

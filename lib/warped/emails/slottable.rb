@@ -1,18 +1,13 @@
 # frozen_string_literal: true
 
-require "active_support/concern"
-require "active_support/core_ext/module/attribute_accessors"
-
 module Warped
   module Emails
     module Slottable
-      extend ActiveSupport::Concern
-
-      included do
-        class_attribute :slots, default: { one: {}, many: {} }, instance_accessor: false
+      def self.included(base)
+        base.extend(ClassMethods)
       end
 
-      class_methods do
+      module ClassMethods
         def slots_one(name)
           class_eval <<-RUBY, __FILE__, __LINE__ + 1
             # def with_header(&block)
@@ -34,15 +29,15 @@ module Warped
 
         def slots_many(name)
           class_eval <<-RUBY, __FILE__, __LINE__ + 1
-            # def with_header(&block)
-            #   slots[:many][:headers] ||= []
-            #   slots[:many][:headers] << block
+            # def with_column(&block)
+            #   slots[:many][:columns] ||= []
+            #   slots[:many][:columns] << block
             # end
             #
-            # def headers
-            #   return [] if slots[:many][:headers].empty?
+            # def columns
+            #   return [] if slots[:many][:columns].empty?
             #
-            #   slots[:many][:headers].map { |block| capture(&block) }
+            #   slots[:many][:columns].map { |block| capture(&block) }
             # end
             def with_#{name.to_s.singularize}(&block)
               slots[:many][:#{name}] ||= []
@@ -59,7 +54,7 @@ module Warped
       end
 
       def slots
-        @slots ||= self.class.slots.deep_dup
+        @slots ||= { one: {}, many: {} }
       end
     end
   end

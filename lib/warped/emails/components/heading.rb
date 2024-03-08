@@ -29,16 +29,22 @@ module Warped
           warning     { "color: #82620F" }
           error       { "color: #AB2816" }
         end
+
+        weight do
+          regular  { "font-weight: 400" }
+          bold     { "font-weight: 700" }
+        end
       end
 
-      default_variant level: :h1, align: :center, color: :regular
+      default_variant level: :h1, align: :center, color: :regular, weight: :regular
 
-      def initialize(text = nil, level: :h1, align: :center, color: :regular)
+      def initialize(text = nil, level: nil, align: nil, color: nil, weight: nil)
         super()
         @text = text
         @level = level
         @align = align
         @color = color
+        @weight = weight
       end
 
       def text
@@ -46,14 +52,14 @@ module Warped
       end
 
       def template
-        style = style(level:, align:, color:)
+        style = style(level:, align:, color:, weight:)
 
         tag.send(level, text, style:)
       end
 
       private
 
-      attr_reader :level, :align, :color
+      attr_reader :level, :align, :color, :weight
     end
   end
 end

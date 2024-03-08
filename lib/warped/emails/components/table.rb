@@ -5,9 +5,7 @@ module Warped
     class Table < Base
       variant do
         base do
-          [
-            "border-collapse: collapse"
-          ]
+          ["border-collapse: collapse"]
         end
       end
 

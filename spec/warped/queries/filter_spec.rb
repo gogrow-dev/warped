@@ -17,9 +17,9 @@ RSpec.describe Warped::Queries::Filter do
     context "when filter_conditions is not empty" do
       let(:filter_conditions) { [{ relation:, field: "id", value: }] }
 
-      context "when relation is =" do
+      context "when relation is eq" do
         let(:value) { 1 }
-        let(:relation) { "=" }
+        let(:relation) { "eq" }
 
         it "filters the scope by the given filter conditions" do
           expect(scope).to receive(:where).with("id" => 1)
@@ -28,9 +28,9 @@ RSpec.describe Warped::Queries::Filter do
         end
       end
 
-      context "when relation is !=" do
+      context "when relation is neq" do
         let(:value) { 1 }
-        let(:relation) { "!=" }
+        let(:relation) { "neq" }
 
         before { allow(scope).to receive_message_chain(:where, :not) }
 
@@ -41,16 +41,47 @@ RSpec.describe Warped::Queries::Filter do
         end
       end
 
-      %w[> >= < <=].each do |relation|
-        context "when relation is #{relation}" do
-          let(:value) { 1 }
-          let(:relation) { relation }
+      context "when relation is gt" do
+        let(:value) { 1 }
+        let(:relation) { "gt" }
 
-          it "filters the scope by the given filter conditions" do
-            expect(scope).to receive(:where).with("id #{relation} ?", 1)
+        it "filters the scope by the given filter conditions" do
+          expect(scope).to receive(:where).with("? > ?", "id", 1)
 
-            filter
-          end
+          filter
+        end
+      end
+
+      context "when relation is gte" do
+        let(:value) { 1 }
+        let(:relation) { "gte" }
+
+        it "filters the scope by the given filter conditions" do
+          expect(scope).to receive(:where).with("id" => 1..)
+
+          filter
+        end
+      end
+
+      context "when relation is lt" do
+        let(:value) { 1 }
+        let(:relation) { "lt" }
+
+        it "filters the scope by the given filter conditions" do
+          expect(scope).to receive(:where).with("id" => ...1)
+
+          filter
+        end
+      end
+
+      context "when relation is lte" do
+        let(:value) { 1 }
+        let(:relation) { "lte" }
+
+        it "filters the scope by the given filter conditions" do
+          expect(scope).to receive(:where).with("id" => ..1)
+
+          filter
         end
       end
 
@@ -135,8 +166,8 @@ RSpec.describe Warped::Queries::Filter do
     context "when filter_conditions contains multiple conditions" do
       let(:filter_conditions) do
         [
-          { relation: "=", field: "id", value: 1 },
-          { relation: "=", field: "name", value: "test" }
+          { relation: "eq", field: "id", value: 1 },
+          { relation: "eq", field: "name", value: "test" }
         ]
       end
 

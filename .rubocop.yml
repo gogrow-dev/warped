@@ -20,6 +20,7 @@ Layout/LineLength:
 
 Metrics/AbcSize:
   Exclude:
+    - lib/warped/queries/filter.rb
     - "lib/warped/emails/components/**/*.rb"
 
 Metrics/BlockLength:
@@ -32,6 +33,8 @@ Metrics/CyclomaticComplexity:
 
 Metrics/MethodLength:
   Max: 20
+  Exclude:
+    - lib/warped/queries/filter.rb
 
 Style/OptionalArguments:
   Exclude:

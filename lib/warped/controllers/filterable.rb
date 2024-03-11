@@ -25,7 +25,7 @@ module Warped
     #   GET /users?name=John
     #   GET /users?created_at=2020-01-01
     #   GET /users?accounts.kind=premium
-    #   GET /users?accounts.kind=premium&accounts.kind.rel=not_eq
+    #   GET /users?accounts.kind=premium&accounts.kind.rel=neq
     #
     # Filters can be combined:
     #   GET /users?name=John&created_at=2020-01-01
@@ -64,9 +64,9 @@ module Warped
     # To use the operands, you must pass a parameter appended with `.rel`, and the value of a valid operand.
     #
     # Example requests:
-    #   GET /users?created_at=2020-01-01&created_at.rel=>
-    #   GET /users?created_at=2020-01-01&created_at.rel=<
-    #   GET /users?created_at=2020-01-01&created_at.rel=not_eq
+    #   GET /users?created_at=2020-01-01&created_at.rel=gt
+    #   GET /users?created_at=2020-01-01&created_at.rel=lt
+    #   GET /users?created_at=2020-01-01&created_at.rel=neq
     #
     # When the operand relation requires multiple values, like +in+, +not_in+, or +between+,
     # you can pass an array of values.

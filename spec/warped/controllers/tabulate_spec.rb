@@ -103,7 +103,7 @@ RSpec.describe Warped::Controllers::Tabulatable, type: :controller do
           expect(Warped::Queries::Filter).to have_received(:call).with(scope,
                                                                        filter_conditions: [{
                                                                          field: :email,
-                                                                         relation: "=",
+                                                                         relation: "eq",
                                                                          value: "john@sample.com"
                                                                        }])
         end
@@ -140,7 +140,7 @@ RSpec.describe Warped::Controllers::Tabulatable, type: :controller do
                                                                        filter_conditions: [{
                                                                          field: :email,
                                                                          value: "john@sample.com",
-                                                                         relation: "="
+                                                                         relation: "eq"
                                                                        }])
         end
 

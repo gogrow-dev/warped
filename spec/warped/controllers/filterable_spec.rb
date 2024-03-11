@@ -43,7 +43,7 @@ RSpec.describe Warped::Controllers::Filterable, type: :controller do
                                                                          {
                                                                            field: :email,
                                                                            value: "sample@test.com",
-                                                                           relation: "="
+                                                                           relation: "eq"
                                                                          }
                                                                        ])
         end
@@ -51,8 +51,8 @@ RSpec.describe Warped::Controllers::Filterable, type: :controller do
 
       context "when passing mapped filter names" do
         let(:params) do
-          { "signed_up_at" => "2020-01-01", "signed_up_at.rel" => ">=", "last_updated_at" => "2020-01-01",
-            "last_updated_at.rel": "<=" }
+          { "signed_up_at" => "2020-01-01", "signed_up_at.rel" => "gte", "last_updated_at" => "2020-01-01",
+            "last_updated_at.rel": "lte" }
         end
 
         it "calls Warped::Queries::Filter with correct params" do
@@ -62,12 +62,12 @@ RSpec.describe Warped::Controllers::Filterable, type: :controller do
                                                                          {
                                                                            field: "users.created_at",
                                                                            value: "2020-01-01",
-                                                                           relation: ">="
+                                                                           relation: "gte"
                                                                          },
                                                                          {
                                                                            field: :updated_at,
                                                                            value: "2020-01-01",
-                                                                           relation: "<="
+                                                                           relation: "lte"
                                                                          }
                                                                        ])
         end

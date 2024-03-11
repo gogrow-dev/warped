@@ -30,17 +30,23 @@ module Warped
           regular  { "font-weight: 400" }
           bold     { "font-weight: 700" }
         end
+
+        display do
+          block  { "display: block" }
+          inline { "display: inline" }
+        end
       end
 
-      default_variant size: :md, color: :regular, weight: :regular, align: :left
+      default_variant size: :md, color: :regular, weight: :regular, display: :block
 
-      def initialize(text = nil, size: :md, color: :regular, weight: :regular, align: :left)
+      def initialize(text = nil, size: nil, color: nil, weight: nil, align: nil, display: nil)
         super()
         @text = text
         @size = size
         @color = color
         @weight = weight
         @align = align
+        @display = display
       end
 
       def text
@@ -48,14 +54,14 @@ module Warped
       end
 
       def template(&)
-        style = style(size:, color:, weight:, align:)
+        style = style(size:, color:, weight:, align:, display:)
 
         tag.p(text, style:)
       end
 
       private
 
-      attr_reader :size, :color, :weight, :align
+      attr_reader :size, :color, :weight, :align, :display
     end
   end
 end

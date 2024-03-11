@@ -1,15 +1,28 @@
 # frozen_string_literal: true
 
-require "active_support/concern"
-require "active_support/core_ext/module/attribute_accessors"
+require "active_support/core_ext/enumerable"
+require "active_support/core_ext/hash/deep_merge"
 require "active_support/core_ext/module/delegation"
+require "active_support/core_ext/object/deep_dup"
 
 module Warped
   module Emails
     module Styleable
-      extend ActiveSupport::Concern
+      def self.included(base)
+        base.extend(ClassMethods)
+      end
 
-      class_methods do
+      module ClassMethods
+        attr_writer :default_variants, :base_styles, :variants
+
+        def inherited(subclass)
+          super
+
+          subclass.default_variants = default_variants.deep_dup.deep_merge!(subclass.default_variants)
+          subclass.base_styles = base_styles.deep_dup.deep_merge!(subclass.base_styles)
+          subclass.variants = variants.deep_dup.deep_merge!(subclass.variants)
+        end
+
         def default_variants
           @default_variants ||= {}
         end
@@ -33,7 +46,8 @@ module Warped
           raise ArgumentError, "You must provide a hash" unless kwargs.is_a?(Hash)
 
           self.default_variants ||= {}
-          self.default_variants[variant_name] = kwargs
+          self.default_variants[variant_name] ||= {}
+          self.default_variants[variant_name].merge!(kwargs)
         end
       end
 
@@ -55,7 +69,7 @@ module Warped
         validate_variants!(variant_name, **kwargs)
 
         default_variants[variant_name] ||= {}
-        default_variants[variant_name].merge(kwargs).each do |group_name, subvariant_name|
+        default_variants[variant_name].merge(kwargs.compact_blank).each do |group_name, subvariant_name|
           subvariant_arr = variant_block_value(variant_name, group_name, subvariant_name)
           base_style_arr.concat(subvariant_arr)
         end
@@ -120,12 +134,16 @@ module Warped
       end
 
       def variant_block_value(variant_name, group_name, subvariant_name)
+        return [] if subvariant_name.nil?
+
         variant_block = self.class.variants[variant_name][group_name.to_sym][subvariant_name.to_sym]
         Array.wrap(instance_eval(&variant_block))
       end
 
       def validate_variants!(name, **kwargs)
         kwargs.each do |group_name, variant_name|
+          next if variant_name.nil?
+
           unless variants[name].key?(group_name.to_sym)
             raise ArgumentError,
                   "Invalid variant group: #{group_name}"

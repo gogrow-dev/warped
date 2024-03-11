@@ -2,32 +2,14 @@
 
 module Warped
   module Emails
-    class Link < Base
+    class Link < Text
       variant do
         base { ["text-decoration: underline"] }
-
-        size do
-          xs { ["font-size: 11px", "line-height: 16px"] }
-          sm { ["font-size: 13px", "line-height: 16px"] }
-          md { ["font-size: 16px", "line-height: 24px"] }
-          lg { ["font-size: 19px", "line-height: 24px"] }
-        end
-
-        color do
-          regular     { "color: #414750" }
-          placeholder { "color: #8B939F" }
-          info        { "color: #1C51A4" }
-        end
-
-        display do
-          block  { "display: block" }
-          inline { "display: inline" }
-        end
       end
 
       default_variant size: :md, color: :info, display: :inline
 
-      def initialize(text = nil, href, size: :md, color: :regular, display: :inline)
+      def initialize(text = nil, href, size: nil, color: nil, display: nil)
         super()
         @text = text
         @href = href

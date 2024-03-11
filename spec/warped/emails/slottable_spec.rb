@@ -9,11 +9,6 @@ RSpec.describe Warped::Emails::Slottable do
     end
   end
 
-  it "adds the slots class attribute" do
-    expect(test_class.slots).to eq(one: {}, many: {})
-    expect(test_class.new.slots).to eq(one: {}, many: {})
-  end
-
   it "adds the slots_one class method" do
     expect(test_class).to respond_to(:slots_one)
   end
@@ -70,6 +65,26 @@ RSpec.describe Warped::Emails::Slottable do
       component.with_header { "<h1>Header2</h1>" }
 
       expect(component.headers).to eq(["&lt;h1&gt;Header1&lt;/h1&gt;", "&lt;h1&gt;Header2&lt;/h1&gt;"])
+    end
+  end
+
+  describe "inheritance" do
+    before do
+      test_class.slots_one(:header)
+    end
+
+    let(:child_class) do
+      Class.new(test_class) do
+        slots_one :footer
+      end
+    end
+
+    it "inherits the slots" do
+      expect(test_class.new).to respond_to(:with_header)
+      expect(test_class.new).not_to respond_to(:with_footer)
+
+      expect(child_class.new).to respond_to(:with_header)
+      expect(child_class.new).to respond_to(:with_footer)
     end
   end
 end

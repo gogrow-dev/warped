@@ -112,7 +112,7 @@ module Warped
           {
             field:,
             value: filter_value(filter_opt),
-            relation: filter_rel_value(filter_opt).presence || (filter_value(filter_opt).is_a?(Array) ? "in" : "=")
+            relation: filter_rel_value(filter_opt).presence || (filter_value(filter_opt).is_a?(Array) ? "in" : "eq")
           }
         end
       end

@@ -94,16 +94,16 @@ GET /users?name[]=John&name[]=Jane # returns users where the name is in ('John',
 GET /users?age.rel=is_null # returns users where the age is null
 GET /users?age.rel=is_not_null # returns users where the age is not null
 GET /users?age.rel=between&age[]=18&age[]=30 # returns users with age between 18 and 30
-GET /users?age.rel=%3E%0A&age=18 # returns users with age greater than 18, %3E%0A is url encoded for ">"
+GET /users?age.rel=gt&age=18 # returns users with age greater than 18
 ```
 
 The full list of filter relations is:
-- `=` (default) - equals
-- `!=` - not equals
-- `>` - greater than
-- `>=` - greater than or equals
-- `<` - less than
-- `<=` - less than or equals
+- `eq` (default) - equals
+- `neq` - not equals
+- `gt` - greater than
+- `gte` - greater than or equals
+- `lt` - less than
+- `lte` - less than or equals
 - `between` - between (requires two values)
 - `in` - in (default when multiple values are provided)
 - `not_in` - not in (requires multiple values)

@@ -7,7 +7,7 @@ module Warped
     class InstallGenerator < Rails::Generators::Base
       source_root File.expand_path("templates", __dir__)
 
-      def say_hello
+      def install
         template "initializer.rb.tt", "config/initializers/warped.rb"
       end
     end

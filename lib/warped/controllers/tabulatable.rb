@@ -18,7 +18,7 @@ module Warped
     #     def index
     #       users = User.left_joins(:posts).group(:id)
     #       users = tabulate(users)
-    #       render json: users, meta: tabulate_info
+    #       render json: users, meta: tabulation
     #     end
     #   end
     #
@@ -37,18 +37,18 @@ module Warped
     #     def index
     #       posts = Post.left_joins(:user).group(:id)
     #       posts = tabulate(posts)
-    #       render json: posts, meta: tabulate_info
+    #       render json: posts, meta: tabulation
     #     end
     #   end
     module Tabulatable
       extend ActiveSupport::Concern
 
-      included do
-        include Filterable
-        include Sortable
-        include Searchable
-        include Pageable
+      include Filterable
+      include Sortable
+      include Searchable
+      include Pageable
 
+      included do
         class_attribute :tabulate_fields, default: []
         class_attribute :mapped_tabulate_fields, default: []
       end
@@ -74,17 +74,6 @@ module Warped
         scope = search(scope)
         scope = sort(scope)
         paginate(scope)
-      end
-
-      # @return [Hash]
-      def tabulate_info
-        {
-          filters: filter_conditions(*filter_fields, *mapped_filter_fields),
-          sorts: sort_conditions(*sort_fields, *mapped_sort_fields),
-          search_term:,
-          search_param:,
-          page_info:
-        }
       end
     end
   end

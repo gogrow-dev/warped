@@ -5,6 +5,7 @@ module RequestHelper
 
   def base_controller
     Class.new do
+      include ActionController::Helpers
       attr_accessor :params
     end
   end

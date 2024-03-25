@@ -115,6 +115,8 @@ module Warped
       included do
         class_attribute :model_search_scope, default: :search
         class_attribute :search_param, default: :q
+
+        helper_method :search_term, :search_param, :model_search_scope
       end
 
       class_methods do

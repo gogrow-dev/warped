@@ -117,6 +117,10 @@ module Warped
         end
       end
 
+      def filterable_by
+        @filterable_by ||= self.class.filter_fields.concat(self.class.mapped_filter_fields)
+      end
+
       private
 
       def filter_name(filter)

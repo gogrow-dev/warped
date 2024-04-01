@@ -11,12 +11,20 @@ module Warped
         include Searchable
 
         included do
-          helper_method :search_url_params
+          helper_method :searched?, :search_url_params
+        end
+
+        def search(...)
+          @searched = true
+
+          super
+        end
+
+        def searched?
+          @searched ||= false
         end
 
         def search_url_params(**options)
-          return options if search_term.blank?
-
           url_params = { search_param => search_term }
           url_params.merge!(options)
           url_params

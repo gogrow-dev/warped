@@ -11,7 +11,7 @@ module Warped
         include Pageable
 
         included do
-          helper_method :pagination, :paginate_url_params
+          helper_method :pagination, :paginated?, :paginate_url_params
         end
 
         def paginate_url_params(**options)
@@ -24,6 +24,16 @@ module Warped
           super.tap do |hsh|
             hsh[:series] = series(hsh[:page], hsh[:total_pages])
           end
+        end
+
+        def paginate(...)
+          @paginated = true
+
+          super
+        end
+
+        def paginated?
+          @paginated ||= false
         end
 
         private

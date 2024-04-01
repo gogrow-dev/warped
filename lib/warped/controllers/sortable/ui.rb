@@ -11,7 +11,17 @@ module Warped
         include Sortable
 
         included do
-          helper_method :sort_url_params
+          helper_method :sorted?, :sort_url_params, :sort_key, :sort_direction
+        end
+
+        def sort(...)
+          @sorted = true
+
+          super
+        end
+
+        def sorted?
+          @sorted ||= false
         end
 
         def sort_url_params(**options)

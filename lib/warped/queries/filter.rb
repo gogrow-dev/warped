@@ -66,24 +66,26 @@ module Warped
 
       def filtered_scope(scope, relation, field, value)
         case relation
-        when "eq", "in"
+        when "eq"
           scope.where(field => value)
+        when "in"
+          scope.where(field => Array.wrap(value))
         when "neq", "not_in"
           scope.where.not(field => value)
         when "between"
-          scope.where("#{field} BETWEEN ? AND ?", value.first, value.last)
+          scope.where(field => value.first..value.last)
         when "starts_with"
-          scope.where("#{field} LIKE ?", "#{value}%")
+          scope.where(arel_table_for(scope, field).matches("#{value}%"))
         when "ends_with"
-          scope.where("#{field} LIKE ?", "%#{value}")
+          scope.where(arel_table_for(scope, field).matches("%#{value}"))
         when "contains"
-          scope.where("#{field} LIKE ?", "%#{value}%")
+          scope.where(arel_table_for(scope, field).matches("%#{value}%"))
         when "is_null"
           scope.where(field => nil)
         when "is_not_null"
           scope.where.not(field => nil)
         when "gt"
-          scope.where("? > ?", field, value)
+          scope.where.not(field => ...value)
         when "gte"
           scope.where(field => value..)
         when "lt"
@@ -91,6 +93,18 @@ module Warped
         when "lte"
           scope.where(field => ..value)
         end
+      end
+
+      # @param scope [ActiveRecord::Relation]
+      # @param field [String|Symbol]
+      # @return [Arel::Table]
+      #  The arel table for the given field. If the field has the format "table.column",
+      #  the method will return the table for the field's table and column.
+      def arel_table_for(scope, field)
+        column, relation = field.to_s.split(".").reverse
+        return scope.arel_table[column.to_sym] unless relation
+
+        scope.arel_table.alias(relation.to_sym)[column.to_sym]
       end
     end
   end

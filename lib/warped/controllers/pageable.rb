@@ -14,7 +14,7 @@ module Warped
     #
     #     def index
     #       scope = paginate(User.all)
-    #       render json: scope, root: :users, meta: page_info
+    #       render json: scope, root: :users, meta: pagination
     #     end
     #   end
     #
@@ -33,7 +33,7 @@ module Warped
     #
     #     def index
     #       scope = paginate(User.all)
-    #       render json: scope, root: :users, meta: page_info
+    #       render json: scope, root: :users, meta: pagination
     #     end
     #   end
     #
@@ -44,7 +44,7 @@ module Warped
     #
     #     def index
     #       scope = paginate(User.all)
-    #       render json: scope, root: :users, meta: page_info
+    #       render json: scope, root: :users, meta: pagination
     #     end
     #
     #     private
@@ -62,17 +62,17 @@ module Warped
     #
     #     def index
     #       scope = paginate(User.all, per_page: 50)
-    #       render json: scope, root: :users, meta: page_info
+    #       render json: scope, root: :users, meta: pagination
     #     end
     #
     #     def other_index
     #       # The default per_page value is used.
     #       scope = paginate(User.all)
-    #       render json: scope, root: :users, meta: page_info
+    #       render json: scope, root: :users, meta: pagination
     #     end
     #   end
     #
-    # The pagination metadata can be accessed by calling the +page_info+ method.
+    # The pagination metadata can be accessed by calling the +pagination+ method.
     # It includes the following keys:
     # - +total_count+: The total number of records in the collection.
     # - +total_pages+: The total number of pages.
@@ -80,7 +80,7 @@ module Warped
     # - +prev_page+: The previous page number.
     # - +page+: The current page number.
     # - +per_page+: The number of records per page.
-    # *Warning*: The +page_info+ method will raise an +ArgumentError+ if the method +paginate+ was not
+    # *Warning*: The +pagination+ method will raise an +ArgumentError+ if the method +paginate+ was not
     # called within the action.
     module Pageable
       extend ActiveSupport::Concern
@@ -96,7 +96,7 @@ module Warped
       # @param per_page [String,Integer,nil] The number of records per page.
       # @return [ActiveRecord::Relation] The paginated scope.
       def paginate(scope, page: self.page, per_page: self.per_page)
-        @page_info, paginated_scope = Queries::Paginate.call(scope, page:, per_page:)
+        @pagination, paginated_scope = Queries::Paginate.call(scope, page:, per_page:)
         paginated_scope
       end
 
@@ -120,8 +120,8 @@ module Warped
       # @return [Hash] Metadata about the pagination.
       # @raise [ArgumentError] If pagination was not performed.
       # @see Warped::Queries::Paginate#metadata
-      def page_info
-        return @page_info if @page_info.present?
+      def pagination
+        return @pagination if @pagination.present?
 
         raise ActionController::BadRequest, "Pagination was not performed"
       end

@@ -25,7 +25,7 @@ RSpec.describe Warped::Controllers::Sortable, type: :controller do
     context "when no sortable fields are defined" do
       it "calls Warped::Queries::Sort with correct params" do
         request
-        expect(Warped::Queries::Sort).to have_received(:call).with(scope, sort_key: :id, sort_direction: :desc)
+        expect(Warped::Queries::Sort).to have_received(:call).with(scope, sort_key: "id", sort_direction: :desc)
       end
     end
 

@@ -14,7 +14,7 @@ class UsersController < ApplicationController
 
   def index
     users = tabulate(User.all)
-    render json: users, meta: page_info
+    render json: users, meta: pagination
   end
 end
 ```
@@ -25,4 +25,4 @@ GET /users?age[]=18&age[]=30&age.rel=between&sort_key=name&sort_direction=asc&q=
 # returns the second page of users with 10 records per page, where the age is between 18 and 30, sorted by name in ascending order, and searched by the term John
 ```
 
-Just like `paginate`, when calling the `tabulate` method in the controller action, the `page_info` method can be used to access the pagination information.
+Just like `paginate`, when calling the `tabulate` method in the controller action, the `pagination` method can be used to access the pagination information.

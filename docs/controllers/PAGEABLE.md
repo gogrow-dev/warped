@@ -11,7 +11,7 @@ class UsersController < ApplicationController
 
   def index
     users = paginate(User.all)
-    render json: users, meta: page_info
+    render json: users, meta: pagination
   end
 end
 ```
@@ -25,7 +25,7 @@ GET /users?page=2&per_page=25 # returns the second page of users with 25 records
 
 ## Accessing the pagination information
 
-The `page_info` method can be used to access the pagination information.
+The `pagination` method can be used to access the pagination information.
 
 ```ruby
 class UsersController < ApplicationController
@@ -33,12 +33,12 @@ class UsersController < ApplicationController
 
   def index
     users = paginate(User.all)
-    render json: users, meta: page_info
+    render json: users, meta: pagination
   end
 end
 ```
 
-`page_info` returns a hash with
+`pagination` returns a hash with
 - `page` - the current page
 - `per_page` - the number of records per page
 - `total_pages` - the total number of pages
@@ -64,7 +64,7 @@ class UsersController < ApplicationController
 
   def index
     users = paginate(User.all)
-    render json: users, meta: page_info
+    render json: users, meta: pagination
   end
 end
 ```

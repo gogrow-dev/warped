@@ -95,7 +95,7 @@ module Warped
           return super unless ::Kernel.block_given?
 
           if !@group_name && name == :base
-            _defin_base_style(&)
+            _define_base_style(&)
           elsif !@group_name
             _define_variant_group(name, &)
           else
@@ -117,7 +117,7 @@ module Warped
           variants[@variant_name][@group_name][name] = block
         end
 
-        def _defin_base_style(&block)
+        def _define_base_style(&block)
           @component.base_styles[@variant_name] = block
         end
       end

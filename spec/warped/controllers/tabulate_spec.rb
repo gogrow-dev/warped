@@ -35,7 +35,7 @@ RSpec.describe Warped::Controllers::Tabulatable, type: :controller do
 
       it "calls Warped::Queries::Sort with correct params" do
         request
-        expect(Warped::Queries::Sort).to have_received(:call).with(scope, sort_key: :id, sort_direction: :desc)
+        expect(Warped::Queries::Sort).to have_received(:call).with(scope, sort_key: "id", sort_direction: :desc)
       end
 
       it "calls Warped::Queries::Search with correct params" do

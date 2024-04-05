@@ -92,7 +92,7 @@ module Warped
       def sort_key
         @sort_key ||= mapped_sort_fields.key(params[:sort_key]).presence ||
                       params[:sort_key] ||
-                      default_sort_key
+                      default_sort_key.to_s
       end
 
       private
@@ -106,7 +106,7 @@ module Warped
       end
 
       def valid_sort_key?
-        sort_key == default_sort_key ||
+        sort_key == default_sort_key.to_s ||
           sort_fields.include?(sort_key) ||
           mapped_sort_fields[sort_key].present?
       end

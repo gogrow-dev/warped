@@ -20,8 +20,10 @@ Layout/LineLength:
 
 Metrics/AbcSize:
   Exclude:
-    - "lib/warped/queries/filter.rb"
+    - "lib/warped/controllers/filterable/ui.rb"
+    - "lib/warped/controllers/sortable/ui.rb"
     - "lib/warped/emails/components/**/*.rb"
+    - "lib/warped/queries/filter.rb"
 
 Metrics/BlockLength:
   Exclude:

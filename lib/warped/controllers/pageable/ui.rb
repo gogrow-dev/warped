@@ -45,10 +45,11 @@ module Warped
         #   the current page is a string, the others are integers
         #   series example: [1, :gap, 7, 8, "9", 10, 11, :gap, 36]
         def series(page, total_pages)
+          return [] if total_pages.zero?
           return ["1"] if total_pages == 1
 
           if total_pages <= 9
-            (1..total_pages).to_a
+            (1..(page - 1)).to_a + [page.to_s] + ((page + 1)..total_pages).to_a
           else
             [1, :gap, page - 2, page - 1, page.to_s, page + 1, page + 2, :gap, total_pages]
           end

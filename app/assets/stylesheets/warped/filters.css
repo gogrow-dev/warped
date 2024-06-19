@@ -1,0 +1,121 @@
+.warped-filters {
+  width: 100%;
+  display: flex;
+  gap: 0.5rem;
+  background-color: var(--warped-base);
+  border-radius: var(--warped-roundness);
+}
+
+.warped-filters--container {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.warped-filters--button {
+  background-color: var(--warped-primary);
+  color: var(--warped-primary-content);
+  padding: 0.5rem;
+  border-radius: var(--warped-roundness);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.warped-filters--clear {
+  background-color: var(--warped-neutral);
+  color: var(--warped-neutral-content);
+  padding: 0.5rem;
+  border-radius: var(--warped-roundness);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.warped-filters--filter {
+  display: flex;
+  gap: 0.25rem;
+  height: 100%;
+  border-radius: var(--warped-roundness);
+  background-color: var(--warped-base);
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  position: relative;
+  border: 1px solid var(--warped-neutral);
+  align-items: center;
+}
+
+.warped-filters--filter-inactive {
+  border: 1px dashed var(--warped-neutral);
+}
+
+.warped-filters--filter--label {
+  font-size: 0.875rem;
+  color: var(--warped-neutral);
+  font-weight: 500;
+}
+
+.warped-filters--filter--icon {
+  height: 1.5rem;
+  width: 1.5rem;
+  color: var(--warped-neutral);
+  cursor: pointer;
+}
+
+.warped-filters--filter--value {
+  display: flex;
+  transition: all 200ms;
+  color: var(--warped-neutral);
+}
+
+.warped-filters--filter--panel-collapsed {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.warped-filters--filter--value--values {
+  font-size: 0.875rem;
+  color: var(--warped-neutral);
+  font-weight: 600;
+}
+
+.warped-filters--filter--panel {
+  transition: all 200ms;
+  width: max-content;
+  position: absolute;
+  top: 2.5rem;
+  left: 0;
+  background-color: var(--warped-base);
+  border-radius: var(--warped-roundness);
+  padding: 0.5rem;
+  display: flex;
+  z-index: 40;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.warped-filters--filter--panel--remove {
+  cursor: pointer;
+  color: var(--warped-danger);
+  width: 2rem;
+  stroke-width: 2;
+}
+
+.warped-filters--filter--panel--select {
+  width: max-content;
+  padding-left: 0.5rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  border-top-left-radius: var(--warped-roundness);
+  border-bottom-left-radius: var(--warped-roundness);
+  border-right: 1px solid var(--warped-neutral);
+}
+
+.warped-filters--filter--panel--input {
+  width: max-content;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  border-top-right-radius: var(--warped-roundness);
+  border-bottom-right-radius: var(--warped-roundness);
+  border-left: 0;
+}

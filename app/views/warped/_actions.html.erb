@@ -1,0 +1,7 @@
+<%# locals: (resource:, actions:)%>
+
+<div class="warped-table--table--cell">
+  <% Array.wrap(actions).each do |action| %>
+    <%= link_to (action.name(resource)), action.path(resource), class: "my-auto btn btn-sm btn-#{action[:color]}", **action.options %>
+  <% end %>
+</div>

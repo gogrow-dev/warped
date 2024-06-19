@@ -1,0 +1,14 @@
+<%# locals: (path:, turbo_action:) %>
+
+<%= form_with url: path, method: :get, html: { class: "warped-filters", id: 'filters' }, data: { controller: "filters", filters_filter_outlet: ".warped-filters--filter", turbo_action: } do |f| %>
+  <div class="warped-filters--container">
+    <% current_action_filters.each do |filter| %>
+      <%= render "warped/filters/filter", form: f, filter: filter %>
+    <% end %>
+  </div>
+
+  <%= f.submit "Filter", class: "warped-filters--button" %>
+  <%= f.button "Clear", type: :reset, class: "warped-filters--clear", data: { action: "filters#clearAll" } %>
+
+  <%= render "warped/hidden_fields", form: f, modules: %i[sortable searchable] %>
+<% end %>

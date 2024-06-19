@@ -1,0 +1,38 @@
+.warped-searchbar {
+  display: flex;
+  width: 100%;
+  background-color: white;
+  border-radius: var(--warped-roundness);
+}
+
+.warped-searchbar form {
+  display: flex;
+  flex-grow: 1;
+}
+
+.warped-searchbar--button {
+  background-color: var(--warped-neutral);
+  color: var(--warped-neutral-content);
+  stroke: var(--warped-neutral-content);
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-top-left-radius: var(--warped-roundness);
+  border-bottom-left-radius: var(--warped-roundness);
+}
+
+.warped-searchbar--button svg {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.warped-searchbar--input {
+  flex-grow: 1;
+  border-top: 1px solid var(--warped-neutral);
+  border-right: 1px solid var(--warped-neutral);
+  border-bottom: 1px solid var(--warped-neutral);
+  border-top-right-radius: var(--warped-roundness);
+  border-bottom-right-radius: var(--warped-roundness);
+  padding-left: 0.5rem;
+}

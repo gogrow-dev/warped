@@ -1,0 +1,47 @@
+<%# locals: (collection:, path:, columns:, turbo_action:, actions: nil) %>
+
+<%= tag.div class: "warped-table" do %>
+  <div class="warped-table--controls">
+    <% if controller.class.include?(Warped::Controllers::Searchable::Ui) %>
+      <%= render "warped/search", path:, turbo_action: %>
+    <% end %>
+
+    <% if controller.class.include?(Warped::Controllers::Filterable::Ui) %>
+      <%= render "warped/filters", path:, turbo_action: %>
+    <% end %>
+  </div>
+
+
+  <div class="warped-table--table">
+    <div class="warped-table--table--header">
+      <div class="warped-table--table--row">
+        <% columns.each do |column| %>
+          <%= render "warped/column", column:, path:, turbo_action: %>
+        <% end %>
+
+        <% if Array.wrap(actions).any? %>
+          <div class="warped-table--table--cell">
+            Actions
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="warped-table--table--row-group">
+      <div class="warped-table--table--empty-row">
+        <div class="warped-table--table--cell">
+          Whoops! Nothing over here!
+        </div>
+      </div>
+      <% if (block = yield).present? %>
+        <%= block %>
+      <% else %>
+        <% collection.each do |resource| %>
+          <%= render "warped/row", resource:, columns:, actions: %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <%= render("warped/pagination", path:, turbo_action:) if controller.class.include?(Warped::Controllers::Pageable::Ui) %>
+
+<% end %>

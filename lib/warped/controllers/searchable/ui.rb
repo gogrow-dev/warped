@@ -27,7 +27,6 @@ module Warped
         def search_url_params(**options)
           url_params = { search_param => search_term }
           url_params.merge!(options)
-          url_params
         end
       end
     end

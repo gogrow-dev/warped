@@ -1,0 +1,104 @@
+/* This file contains all the styles necessary for Warped::Table to work */
+.warped-table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  row-gap: 0.5rem;
+  background-color: var(--warped-base);
+  border-radius: var(--warped-roundness);
+  padding: 0.5rem;
+}
+
+.warped-table--controls {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.5rem;
+}
+
+.warped-table--table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  display: table;
+  table-layout: auto;
+}
+
+.warped-table--table--header {
+  display: table-header-group;
+  background-color: var(--warped-neutral);
+}
+
+.warped-table--table--header .warped-table--table--row .warped-table--table--cell {
+  font-weight: 500;
+  color: var(--warped-neutral-content);
+  border-right: 1px solid var(--warped-neutral-content);
+  padding: 0 0.25rem;
+  stroke: var(--warped-neutral-content);
+  stroke-width: 0.5;
+}
+
+.warped-table--table--header .warped-table--table--row .warped-table--table--cell form {
+  width: 100%;
+}
+
+.warped-table--table--header .warped-table--table--row .warped-table--table--cell form button {
+  display: flex;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.warped-table--table--header .warped-table--table--row .warped-table--table--cell form button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.warped-table--table--header .warped-table--table--row .warped-table--table--cell:last-child {
+  border-right: none;
+}
+
+.warped-table--table--row {
+  display: table-row;
+}
+
+.warped-table--table--row:not(:last-child) {
+  border-bottom: 1px solid var(--warped-neutral);
+}
+
+.warped-table--table--cell {
+  display: table-cell;
+  padding: 0.125rem 0.25rem;
+  vertical-align: middle;
+}
+
+.warped-table--table--row-group {
+  display: table-row-group;
+}
+
+.warped-table--table--row-group>*+* {
+  border-top: 1px solid var(--warped-neutral);
+}
+
+.warped-table--table--row-group .warped-table--table--empty-row:only-child {
+  display: table-row;
+}
+
+.warped-table--table--row-group .warped-table--table--row:nth-child(odd) {
+  background-color: rgba(var(--warped-neutral-rgb), 0.1);
+}
+
+.warped-table--table--row-group .warped-table--table--empty-row {
+  display: none;
+  position: relative;
+  height: 3rem;
+}
+
+.warped-table--table--row-group .warped-table--table--empty-row .warped-table--table--cell {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  font-weight: 500;
+  padding-top: 0.5rem;
+}

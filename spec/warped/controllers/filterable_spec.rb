@@ -30,7 +30,8 @@ RSpec.describe Warped::Controllers::Filterable, type: :controller do
 
     context "when filterable fields are defined" do
       before do
-        MockController.filterable_by :email, "users.created_at" => "signed_up_at", updated_at: "last_updated_at"
+        MockController.filterable_by :email, "users.created_at" => { kind: :date_time, alias_name: "signed_up_at" },
+                                             updated_at: { alias_name: "last_updated_at" }
       end
 
       context "when passing non mapped filter names" do
@@ -41,7 +42,7 @@ RSpec.describe Warped::Controllers::Filterable, type: :controller do
           expect(Warped::Queries::Filter).to have_received(:call).with(scope,
                                                                        filter_conditions: [
                                                                          {
-                                                                           field: :email,
+                                                                           field: "email",
                                                                            value: "sample@test.com",
                                                                            relation: "eq"
                                                                          }
@@ -61,11 +62,11 @@ RSpec.describe Warped::Controllers::Filterable, type: :controller do
                                                                        filter_conditions: [
                                                                          {
                                                                            field: "users.created_at",
-                                                                           value: "2020-01-01",
+                                                                           value: DateTime.new(2020, 1, 1),
                                                                            relation: "gte"
                                                                          },
                                                                          {
-                                                                           field: :updated_at,
+                                                                           field: "updated_at",
                                                                            value: "2020-01-01",
                                                                            relation: "lte"
                                                                          }
@@ -81,9 +82,8 @@ RSpec.describe Warped::Controllers::Filterable, type: :controller do
           expect(Warped::Queries::Filter).to have_received(:call).with(scope,
                                                                        filter_conditions: [
                                                                          {
-                                                                           field: :email,
+                                                                           field: "email",
                                                                            value: nil,
-
                                                                            relation: "is_null"
                                                                          }
                                                                        ])
@@ -98,7 +98,7 @@ RSpec.describe Warped::Controllers::Filterable, type: :controller do
           expect(Warped::Queries::Filter).to have_received(:call).with(scope,
                                                                        filter_conditions: [
                                                                          {
-                                                                           field: :email,
+                                                                           field: "email",
                                                                            value: nil,
                                                                            relation: "is_not_null"
                                                                          }

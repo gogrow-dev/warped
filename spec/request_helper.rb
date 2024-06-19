@@ -2,10 +2,12 @@
 
 module RequestHelper
   require "action_controller"
+  require "active_support/rescuable"
 
   def base_controller
     Class.new do
       include ActionController::Helpers
+      include ActiveSupport::Rescuable
       attr_accessor :params
     end
   end

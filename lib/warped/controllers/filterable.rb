@@ -3,6 +3,8 @@
 require "active_support/concern"
 require "active_support/core_ext/class/attribute"
 require "active_support/core_ext/enumerable"
+require "active_support/core_ext/hash/indifferent_access"
+require "active_support/core_ext/object/blank"
 
 module Warped
   module Controllers
@@ -40,7 +42,7 @@ module Warped
     #   class UsersController < ApplicationController
     #     include Filterable
     #
-    #     filterable_by :name, :created_at, 'accounts.kind' => 'kind'
+    #     filterable_by :name, :created_at, 'accounts.kind' => { alias_name: 'kind' }
     #
     #     def index
     #       scope = filter(User.joins(:account))
@@ -74,71 +76,120 @@ module Warped
     # Example requests:
     #   GET /users?created_at[]=2020-01-01&created_at[]=2020-01-03&created_at.rel=in
     #   GET /users?created_at[]=2020-01-01&created_at[]=2020-01-03&created_at.rel=between
+    #
+    # Setting types and casting:
+    # By default, the filter values are cast to strings. If you want to cast the values to a specific type,
+    # and validate that the values are of the correct type, you can pass the kind of the filter to
+    # the +filterable_by+ method.
+    #
+    # Example:
+    #
+    #   class UsersController < ApplicationController
+    #     include Filterable
+    #
+    #     filterable_by :name, :created_at, 'accounts.active' => { kind: :integer, alias_name: 'active' }
+    #
+    #     def index
+    #       scope = filter(User.joins(:account))
+    #       render json: scope
+    #     end
+    #   end
+    #
+    # Example requests:
+    #   GET /users?active=1
+    #
+    # The +kind+ parameter will be cast to an integer.
+    # If the value is not an integer, an error will be raised, and the response will be a 400 Bad Request.
+    #
+    # In order to change the error message, you can rescue from the +Filter::ValueError+ exception, or
+    # override the +render_invalid_filter_value+ method.
+    #
+    #   def render_invalid_filter_value(exception)
+    #     render action_name, status: :bad_request
+    #   end
+    #
     module Filterable
       extend ActiveSupport::Concern
 
       included do
-        class_attribute :filter_fields, default: []
-        class_attribute :mapped_filter_fields, default: []
+        class_attribute :filters, default: []
+
+        helper_method :current_action_filters, :current_action_filter_values
+
+        rescue_from Filter::RelationError, with: :render_invalid_filter_relation
+        rescue_from Filter::ValueError, with: :render_invalid_filter_value
       end
 
       class_methods do
         # @param keys [Array<Symbol,String,Hash>]
         # @param mapped_keys [Hash<Symbol,String>]
         def filterable_by(*keys, **mapped_keys)
-          self.filter_fields = keys
-          self.mapped_filter_fields = mapped_keys.to_a
+          self.filters = keys.map do |field|
+            Warped::Filter.build(nil, field)
+          end
+
+          complex_filters = mapped_keys.with_indifferent_access
+
+          self.filters += complex_filters.map do |field_name, opts|
+            kind = opts[:kind]
+            alias_name = opts[:alias_name]
+
+            Warped::Filter.build(kind, field_name, alias_name:)
+          end
         end
       end
 
       # @param scope [ActiveRecord::Relation]
-      # @param filter_conditions [Array<Hash>]
-      # @option filter_conditions [Symbol,String] :field
-      # @option filter_conditions [String,Integer,Array<String,Integer>] :value
-      # @option filter_conditions [String] :relation
+      # @param filter_conditions [Array<Warped::Filter::Base>|nil]
       # @return [ActiveRecord::Relation]
-      def filter(scope, filter_conditions: filter_conditions(*filter_fields, *mapped_filter_fields))
-        Warped::Queries::Filter.call(scope, filter_conditions:)
+      def filter(scope, filter_conditions: nil)
+        action_filters = filter_conditions.presence || filters
+        @current_action_filters = action_filters
+        @current_action_filter_values = parse_filter_params
+
+        Warped::Queries::Filter.call(scope, filter_conditions: current_action_filter_values.map(&:to_h))
       end
 
-      # @param fields [Array<Symbol,String>]
       # @return [Array<Hash>]
-      def filter_conditions(*fields)
-        fields.filter_map do |filter_opt|
-          field = filter_name(filter_opt)
+      def parse_filter_params
+        current_action_filters.filter_map do |filter|
+          raw_value = params[filter.parameter_name]
+          raw_relation = params["#{filter.parameter_name}.rel"]
 
-          next if filter_value(filter_opt).blank? && %w[is_null is_not_null].exclude?(filter_rel_value(filter_opt))
+          filter_value = Warped::Filter::Value.new(filter, raw_relation.presence || "eq", raw_value.presence)
 
-          {
-            field:,
-            value: filter_value(filter_opt),
-            relation: filter_rel_value(filter_opt).presence || (filter_value(filter_opt).is_a?(Array) ? "in" : "eq")
-          }
+          next if filter_value.empty?
+
+          filter_value
         end
       end
 
-      def filterable_by
-        @filterable_by ||= self.class.filter_fields.concat(self.class.mapped_filter_fields)
+      def current_action_filters
+        @current_action_filters ||= []
       end
 
-      private
-
-      def filter_name(filter)
-        filter.is_a?(Array) ? filter.first : filter
+      def current_action_filter_values
+        @current_action_filter_values ||= []
       end
 
-      def filter_mapped_name(filter)
-        filter.is_a?(Array) ? filter.last : filter
+      protected
+
+      def render_invalid_filter_relation(exception)
+        message = exception.message
+
+        respond_to do |format|
+          format.json { render json: { error: message }, status: :bad_request }
+          format.html { render action_name, alert: message }
+        end
       end
 
-      def filter_value(filter)
-        param_key = filter_mapped_name(filter)
-        params[param_key]
-      end
+      def render_invalid_filter_value(exception)
+        message = exception.message
 
-      def filter_rel_value(filter)
-        param_key = filter_mapped_name(filter)
-        params["#{param_key}.rel"]
+        respond_to do |format|
+          format.json { render json: { error: message }, status: :bad_request }
+          format.html { render action_name, alert: message }
+        end
       end
     end
   end

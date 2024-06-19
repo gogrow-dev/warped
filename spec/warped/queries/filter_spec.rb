@@ -47,7 +47,7 @@ RSpec.describe Warped::Queries::Filter do
 
         it "filters the scope by the given filter conditions" do
           expect(scope).to receive(:where).and_return(scope)
-          expect(scope).to receive(:not).with("id" => ...value)
+          expect(scope).to receive(:not).with("id" => ..value)
 
           filter
         end
@@ -69,7 +69,8 @@ RSpec.describe Warped::Queries::Filter do
         let(:relation) { "lt" }
 
         it "filters the scope by the given filter conditions" do
-          expect(scope).to receive(:where).with("id" => ...1)
+          expect(scope).to receive(:where).and_return(scope)
+          expect(scope).to receive(:not).with("id" => 1..)
 
           filter
         end

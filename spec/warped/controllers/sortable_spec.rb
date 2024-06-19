@@ -25,16 +25,17 @@ RSpec.describe Warped::Controllers::Sortable, type: :controller do
     context "when no sortable fields are defined" do
       it "calls Warped::Queries::Sort with correct params" do
         request
-        expect(Warped::Queries::Sort).to have_received(:call).with(scope, sort_key: "id", sort_direction: :desc)
+        expect(Warped::Queries::Sort).to have_received(:call).with(scope, sort_key: "id", sort_direction: "desc")
       end
     end
 
     context "when sortable fields are defined" do
       before do
-        MockController.sortable_by :email, "users.created_at" => "signed_up_at", updated_at: "last_updated_at"
+        MockController.sortable_by :email, "users.created_at" => { alias_name: "signed_up_at" },
+                                           updated_at: { alias_name: "last_updated_at" }
       end
 
-      let(:sort_direction) { %w[asc desc asc_nulls_first asc_nulls_last desc_nulls_first desc_nulls_last].sample }
+      let(:sort_direction) { %w[desc asc_nulls_first asc_nulls_last desc_nulls_first desc_nulls_last].sample }
 
       context "when passing non mapped sort names" do
         let(:params) { { sort_key: "email", sort_direction: } }
@@ -62,15 +63,16 @@ RSpec.describe Warped::Controllers::Sortable, type: :controller do
         it "calls Warped::Queries::Sort with correct params" do
           request
           expect(Warped::Queries::Sort).to have_received(:call).with(scope, sort_key: "updated_at",
-                                                                            sort_direction: :desc)
+                                                                            sort_direction: "desc")
         end
       end
 
       context "when a non existing sort key is passed" do
         let(:params) { { sort_key: "non_existing_key" } }
 
-        it "raises an ActionController::BadRequest error" do
-          expect { request }.to raise_error(ActionController::BadRequest).with_message(anything)
+        it "returns the default sort key and sort_direction" do
+          request
+          expect(Warped::Queries::Sort).to have_received(:call).with(scope, sort_key: "id", sort_direction: "desc")
         end
       end
     end

@@ -1,14 +1,21 @@
-<%# locals: (path:, turbo_action:) %>
+<%# locals: (path:, turbo_action:, **options) %>
 
-<%= form_with url: path, method: :get, html: { class: "warped-filters", id: 'filters' }, data: { controller: "filters", filters_filter_outlet: ".warped-filters--filter", turbo_action: } do |f| %>
-  <div class="warped-filters--container">
-    <% current_action_filters.each do |filter| %>
-      <%= render "warped/filters/filter", form: f, filter: filter %>
-    <% end %>
-  </div>
+<% opts = options.deep_dup %>
 
-  <%= f.submit "Filter", class: "warped-filters--button" %>
+<% data = opts.delete(:data) { {} } %>
+<% data.merge!(controller: "filters #{data[:controller]}", filters_filter_outlet: ".warped-filters--filter", turbo_action:) %>
+
+<% html = opts.extract!(:html) %>
+<% html_class = opts.delete(:class) %>
+<% html.merge!(class: "warped-filters #{html_class}") %>
+
+<%= form_with url: path, method: :get, html:, data:, **opts do |f| %>
+  <%= f.submit "Filter", class: "warped-filters--submit" %>
   <%= f.button "Clear", type: :reset, class: "warped-filters--clear", data: { action: "filters#clearAll" } %>
+
+  <% current_action_filters.each do |filter| %>
+    <%= render "warped/filters/filter", form: f, filter: filter %>
+  <% end %>
 
   <%= render "warped/hidden_fields", form: f, modules: %i[sortable searchable] %>
 <% end %>

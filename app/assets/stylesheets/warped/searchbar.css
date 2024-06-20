@@ -5,11 +5,6 @@
   border-radius: var(--warped-roundness);
 }
 
-.warped-searchbar form {
-  display: flex;
-  flex-grow: 1;
-}
-
 .warped-searchbar--button {
   background-color: var(--warped-neutral);
   color: var(--warped-neutral-content);

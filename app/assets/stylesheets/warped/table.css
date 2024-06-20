@@ -9,6 +9,10 @@
   padding: 0.5rem;
 }
 
+.warped-table--container {
+  overflow-x: auto;
+}
+
 .warped-table--controls {
   display: flex;
   flex-direction: column;
@@ -20,7 +24,6 @@
   border-collapse: collapse;
   border-spacing: 0;
   display: table;
-  table-layout: auto;
 }
 
 .warped-table--table--header {
@@ -68,7 +71,7 @@
 
 .warped-table--table--cell {
   display: table-cell;
-  padding: 0.125rem 0.25rem;
+  padding: 0.25rem;
   vertical-align: middle;
 }
 
@@ -101,4 +104,11 @@
   text-align: center;
   font-weight: 500;
   padding-top: 0.5rem;
+}
+
+.warped-table--action {
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--warped-roundness);
+  background-color: var(--warped-neutral);
+  color: var(--warped-neutral-content);
 }

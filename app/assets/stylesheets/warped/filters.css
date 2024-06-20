@@ -4,16 +4,10 @@
   gap: 0.5rem;
   background-color: var(--warped-base);
   border-radius: var(--warped-roundness);
+  flex-wrap: wrap
 }
 
-.warped-filters--container {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.warped-filters--button {
+.warped-filters--submit {
   background-color: var(--warped-primary);
   color: var(--warped-primary-content);
   padding: 0.5rem;

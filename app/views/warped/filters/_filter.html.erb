@@ -23,13 +23,13 @@
     </span>
 
     <span class="warped-filters--filter--value--values" data-filter-target="value">
-      <%= ": #{filter_value&.value}" if filter_value&.value.present? %>
+      <%= ": #{filter_value&.value}" if filter_value&.html_value.present? %>
     </span>
   </div>
 
   <div class="warped-filters--filter--panel-collapsed warped-filters--filter--panel" data-filter-target="panel">
     <%= form.select "#{filter.parameter_name}.rel", options_for_select(filter.relations, include_blank: true, selected: filter_value&.relation), {}, class: "warped-filters--filter--panel--select", data: { filter_target: "relationInput", action: "change->filter#changeRelation" } %>
-  <%= tag :input, type: filter.html_type, name: filter.parameter_name, value: filter_value&.value, class: "warped-filters--filter--panel--input", data: { filter_target: "valueInput", action: "keyup->filter#changeValue" } %>
+    <%= tag :input, type: filter.html_type, name: filter.parameter_name, value: filter_value&.html_value, class: "warped-filters--filter--panel--input", data: { filter_target: "valueInput", action: "keyup->filter#changeValue" } %>
 
     <span class="warped-filters--filter--panel--remove" data-action="click->filter#clear click->filter#close">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">

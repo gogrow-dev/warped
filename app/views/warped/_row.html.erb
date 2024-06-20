@@ -8,7 +8,7 @@
   <% else %>
     <% columns.each do |column| %>
       <%= render "warped/cell" do %>
-        <%= resource.public_send(column.method_name) %>
+        <%= column.content_for(resource) %>
       <% end %>
     <% end %>
 

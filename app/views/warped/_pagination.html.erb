@@ -1,4 +1,7 @@
-<%# locals: (path:, turbo_action:) %>
+<%# locals: (path:, turbo_action:, **options) %>
+
+<% opts = options.deep_dup %>
+<% pagination_class = "warped--pagination #{opts.delete(:class)}" %>
 
 <% uri = URI(path) %>
 
@@ -8,7 +11,7 @@
   <% hash.merge!(search_url_params) if try(:searched?) %>
 <% end %>
 
-<nav class="warped--pagination" role="navigation">
+<%= tag.nav(class: pagination_class, role: "navigation", **opts) do %>
   <% if pagination[:prev_page] -%> <%= button_to("Previous", path, { "data-turbo-action" => turbo_action, method: :get, form_class: "warped--pagination--btn", params: html_form_options.merge(page: pagination[:prev_page]) }) %>
   <% else -%> <span class="warped--pagination--btn warped--pagination--btn-disabled" disabled>Previous</span>
   <% end -%>
@@ -28,4 +31,4 @@
   <% if pagination[:next_page] -%>  <%= button_to("Next", path, { "data-turbo-action" => turbo_action, method: :get, form_class: "warped--pagination--btn", params: html_form_options.merge(page: pagination[:next_page]) }) %>
   <% else -%>  <span class=" warped--pagination--btn warped--pagination--btn-disabled" disabled>Next</span>
   <% end -%>
-</nav>
+<% end %>

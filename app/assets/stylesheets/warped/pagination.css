@@ -67,8 +67,8 @@
   cursor: pointer;
 }
 
-.warped--pagination--gap {
+.warped--pagination--btn-gap:hover {
   background-color: var(--warped-neutral);
   color: var(--warped-neutral-content);
-  padding: 0.25rem 0.5rem;
+  cursor: not-allowed;
 }

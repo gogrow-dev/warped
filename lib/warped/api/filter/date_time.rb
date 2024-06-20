@@ -18,6 +18,12 @@ module Warped
       def html_type
         "datetime-local"
       end
+
+      class Value < Value
+        def html_value
+          value.strftime("%Y-%m-%dT%H:%M:%S")
+        end
+      end
     end
   end
 end

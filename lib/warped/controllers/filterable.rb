@@ -156,7 +156,7 @@ module Warped
           raw_value = params[filter.parameter_name]
           raw_relation = params["#{filter.parameter_name}.rel"]
 
-          filter_value = Warped::Filter::Value.new(filter, raw_relation.presence || "eq", raw_value.presence)
+          filter_value = filter.class::Value.new(filter, raw_relation.presence || "eq", raw_value.presence)
 
           next if filter_value.empty?
 

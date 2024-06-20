@@ -7,8 +7,14 @@ export default class FiltersController extends Controller {
     event.preventDefault();
 
     this.filterOutlets.forEach(outlet => {
-      outlet.clear();
+      outlet.clear(false);
     })
+
+    this.form.requestSubmit();
+  }
+
+  get form() {
+    return this.element;
   }
 }
 

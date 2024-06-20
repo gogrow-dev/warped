@@ -56,14 +56,16 @@ export default class FilterController extends Controller {
     }
   }
 
-  clear() {
+  clear(submit = true) {
     this.valueTarget.textContent = ""
     this.valueInputTarget.value = ""
     this.relationInputTarget.value = ""
     this.badgeValueTarget.classList.add("hidden")
     this.element.classList.add(this.emptyClass)
 
-    this.form.requestSubmit();
+    if (submit) {
+      this.form.requestSubmit();
+    }
   }
 
   get form() {

@@ -13,16 +13,19 @@ module Warped
           helper_method :filters, :filtered?, :filter_url_params, :filterable_by
         end
 
+        # @see Filterable#filter
         def filter(...)
           @filtered = true
 
           super
         end
 
+        # @return [Boolean] Whether the current action is filtered.
         def filtered?
           @filtered ||= false
         end
 
+        # @return [Hash] The filters for the current action.
         def filter_url_params(**options)
           url_params = {}
           current_action_filter_values.each_with_object(url_params) do |filter_value, hsh|

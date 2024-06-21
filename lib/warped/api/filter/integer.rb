@@ -13,13 +13,13 @@ module Warped
           value
         when ::String
 
-          raise ValueError, "#{value} cannot be converted to #{kind}" unless value.match?(/\A-?\d+\z/)
+          raise ValueError, "#{value} cannot be casted to #{kind}" unless value.match?(/\A-?\d+\z/)
 
           value.to_i
         when ::Float, ::BigDecimal
           value.to_i
         else
-          raise ValueError, "#{value} cannot be converted to #{kind}"
+          raise ValueError, "#{value} cannot be casted to #{kind}"
         end
       end
 

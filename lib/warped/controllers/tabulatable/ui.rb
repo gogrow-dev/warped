@@ -31,6 +31,8 @@ module Warped
           }
         end
 
+        # @param options [Hash] Additional hash of options to include in the tabulation url_params
+        # @return [Hash] The tabulation url_params
         def tabulate_url_params(**options)
           base = paginate_url_params
           base.merge!(search_url_params)
@@ -41,6 +43,8 @@ module Warped
           base.tap(&:compact_blank!)
         end
 
+        # @param options [Hash] Additional hash of options to include in the tabulation query
+        # @return [String] The tabulation query string
         def tabulate_query(**options)
           tabulate_url_params(**options).to_query
         end

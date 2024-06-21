@@ -86,8 +86,7 @@ module Warped
       end
 
       # @param scope [ActiveRecord::Relation] The scope to sort.
-      # @param sort_key [String, Symbol] The sort key.
-      # @param sort_direction [String, Symbol] The sort direction.
+      # @param sort_conditions [Array<Warped::Sort::Base>|nil] The sort conditions.
       # @return [ActiveRecord::Relation]
       def sort(scope, sort_conditions: nil)
         action_sorts = sort_conditions.presence || sorts
@@ -97,7 +96,7 @@ module Warped
                                   sort_direction: current_action_sort_value.direction)
       end
 
-      # @return [String] The sort direction.
+      # @return [Warped::Sort::Value] The current sort value.
       def current_action_sort_value
         @current_action_sort_value ||= begin
           sort_obj = current_action_sorts.find do |sort|
@@ -114,6 +113,7 @@ module Warped
 
       protected
 
+      # @param exception [Sort::DirectionError]
       def render_invalid_sort_direction(exception)
         render json: { error: exception.message }, status: :bad_request
       end

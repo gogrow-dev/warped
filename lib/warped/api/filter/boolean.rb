@@ -16,7 +16,7 @@ module Warped
         when "false", "0", "f", 0
           false
         else
-          raise ValueError, "#{value} cannot be converted to #{kind}"
+          raise ValueError, "#{value} cannot be casted to #{kind}"
         end
       end
 

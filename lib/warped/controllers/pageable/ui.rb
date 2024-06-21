@@ -14,23 +14,28 @@ module Warped
           helper_method :pagination, :paginated?, :paginate_url_params
         end
 
+        # @return [Hash] The paginate_url_params
         def paginate_url_params(**options)
           url_params = { page:, per_page: }
           url_params.merge!(options)
         end
 
+        # @see Pageable#pagination
+        # @return [Hash]
         def pagination
           super.tap do |hsh|
             hsh[:series] = series(hsh[:page], hsh[:total_pages])
           end
         end
 
+        # @see Pageable#paginate
         def paginate(...)
           @paginated = true
 
           super
         end
 
+        # @return [Boolean] Whether the current action is paginated.
         def paginated?
           @paginated ||= false
         end

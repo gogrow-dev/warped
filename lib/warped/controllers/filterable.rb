@@ -164,16 +164,19 @@ module Warped
         end
       end
 
+      # @return [Array<Warped::Filter::Base>]
       def current_action_filters
         @current_action_filters ||= []
       end
 
+      # @return [Array<Warped::Filter::Base::Value>]
       def current_action_filter_values
         @current_action_filter_values ||= []
       end
 
       protected
 
+      # @param exception [Filter::RelationError]
       def render_invalid_filter_relation(exception)
         message = exception.message
 
@@ -183,6 +186,7 @@ module Warped
         end
       end
 
+      # @param exception [Filter::ValueError]
       def render_invalid_filter_value(exception)
         message = exception.message
 

@@ -12,7 +12,7 @@ module Warped
 
         ::Date.parse(value)
       rescue ::Date::Error
-        raise ValueError, "#{value} cannot be converted to #{kind}"
+        raise ValueError, "#{value} cannot be casted to #{kind}"
       end
 
       def html_type

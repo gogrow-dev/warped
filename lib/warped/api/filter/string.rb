@@ -10,7 +10,7 @@ module Warped
 
         value.to_s
       rescue StandardError
-        raise ValueError, "#{value} cannot be converted to #{kind}"
+        raise ValueError, "#{value} cannot be casted to #{kind}"
       end
 
       def html_type

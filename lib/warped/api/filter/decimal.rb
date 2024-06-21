@@ -16,7 +16,7 @@ module Warped
         when ::Integer, ::Float, ::String
           value.to_d
         else
-          raise ValueError, "#{value} cannot be converted to #{kind}"
+          raise ValueError, "#{value} cannot be casted to #{kind}"
         end
       end
 

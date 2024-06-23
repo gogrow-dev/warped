@@ -113,6 +113,7 @@ module Warped
 
       included do
         class_attribute :filters, default: []
+        class_attribute :strict_filtering, default: false
 
         helper_method :current_action_filters, :current_action_filter_values
 
@@ -123,9 +124,11 @@ module Warped
       class_methods do
         # @param keys [Array<Symbol,String,Hash>]
         # @param mapped_keys [Hash<Symbol,String>]
-        def filterable_by(*keys, **mapped_keys)
+        def filterable_by(*keys, strict: nil, **mapped_keys)
+          self.strict_filtering = strict unless strict.nil?
+
           self.filters = keys.map do |field|
-            Warped::Filter.build(nil, field)
+            Warped::Filter.build(nil, field, strict:)
           end
 
           complex_filters = mapped_keys.with_indifferent_access
@@ -134,7 +137,7 @@ module Warped
             kind = opts[:kind]
             alias_name = opts[:alias_name]
 
-            Warped::Filter.build(kind, field_name, alias_name:)
+            Warped::Filter.build(kind, field_name, alias_name:, strict:)
           end
         end
       end

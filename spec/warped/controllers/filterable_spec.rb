@@ -30,7 +30,7 @@ RSpec.describe Warped::Controllers::Filterable, type: :controller do
 
     context "when filterable fields are defined" do
       before do
-        MockController.filterable_by :email, "users.created_at" => { kind: :date_time, alias_name: "signed_up_at" },
+        MockController.filterable_by :email, "users.created_at" => { kind: :time, alias_name: "signed_up_at" },
                                              updated_at: { alias_name: "last_updated_at" }
       end
 

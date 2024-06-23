@@ -22,17 +22,17 @@ module Warped
 
         # @return [String] The casted filter value.
         def value
-          filter.cast!(@value)
+          filter.cast(@value)
         end
 
         # @return [String] The validated filter relation.
         def relation
-          filter.relation!(@relation)
+          filter.relation(@relation)
         end
 
         # @return [Boolean] Whether the filter is empty.
         def empty?
-          value.blank? && !%w[is_null is_not_null].include?(relation)
+          value.nil? && !%w[is_null is_not_null].include?(relation)
         end
 
         def to_h

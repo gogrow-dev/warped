@@ -4,7 +4,7 @@
 
 <div class="warped-filters--filter <%= 'warped-filters--filter-inactive' if filter_value.blank? %>" data-controller="filter" data-filter-filter-outlet=".warped-filters--filter" data-filter-empty-class="warped-filters--filter-inactive" data-filter-collapsed-class="warped-filters--filter--panel-collapsed" data-action="keydown.esc@window->filter#close click@window->filter#clickOutside">
   <div class="warped-filters--filter--icon" data-action="click->filter#toggle">
-    <% if filter_value.present? %>
+    <% if !filter_value.nil? %>
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
       </svg>
@@ -23,7 +23,7 @@
     </span>
 
     <span class="warped-filters--filter--value--values" data-filter-target="value">
-      <%= ": #{filter_value&.value}" if filter_value&.html_value.present? %>
+      <%= ": #{filter_value&.value}" if !filter_value&.html_value.nil? %>
     </span>
   </div>
 

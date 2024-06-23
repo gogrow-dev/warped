@@ -116,9 +116,6 @@ module Warped
         class_attribute :strict_filtering, default: false
 
         helper_method :current_action_filters, :current_action_filter_values
-
-        rescue_from Filter::RelationError, with: :render_invalid_filter_relation
-        rescue_from Filter::ValueError, with: :render_invalid_filter_value
       end
 
       class_methods do
@@ -175,28 +172,6 @@ module Warped
       # @return [Array<Warped::Filter::Base::Value>]
       def current_action_filter_values
         @current_action_filter_values ||= []
-      end
-
-      protected
-
-      # @param exception [Filter::RelationError]
-      def render_invalid_filter_relation(exception)
-        message = exception.message
-
-        respond_to do |format|
-          format.json { render json: { error: message }, status: :bad_request }
-          format.html { render action_name, alert: message }
-        end
-      end
-
-      # @param exception [Filter::ValueError]
-      def render_invalid_filter_value(exception)
-        message = exception.message
-
-        respond_to do |format|
-          format.json { render json: { error: message }, status: :bad_request }
-          format.html { render action_name, alert: message }
-        end
       end
     end
   end

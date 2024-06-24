@@ -18,8 +18,8 @@ The generator will create a file at `config/initializers/warped.rb` with the def
 ### Installation for rails fullstack apps
 
 For using the views provided by the gem, your app will need to have the following:
-1. [rails/importmap-rails: Use ESM with importmap to manage modern JavaScript in Rails without transpiling or bundling.](https://github.com/rails/importmap-rails) configured
-2. [hotwired/stimulus-rails: Use Stimulus in your Ruby on Rails app](https://github.com/hotwired/stimulus-rails) configured
+1. [rails/importmap-rails](https://github.com/rails/importmap-rails) configured
+2. [hotwired/stimulus-rails](https://github.com/hotwired/stimulus-rails) configured
 
 Add the following to your `config/importmap.rb`:
 
@@ -27,10 +27,9 @@ Add the following to your `config/importmap.rb`:
 pin_all_from "app/javascript/controllers/warped", under: "controllers/warped"
 ```
 
->This will import all the stimulus controllers provided by the gem.
+> This will import all the stimulus controllers provided by the gem.
 
-Add the following to your `app/javascript/controllers/index.js`, bellow the `eagerLoadControllersFrom("controllers", application)`
-
+Add the following to your `app/javascript/controllers/index.js`, bellow the `eagerLoadControllersFrom("controllers", application)` line:
 ```javascript
 eagerLoadControllersFrom("warped/controllers", application)
 ```
@@ -300,7 +299,7 @@ The code above, renders a table with:
 - A pagination component that will paginate the users, showing 10 users per page by default.
 - The table filtering/sorting/searching/pagination will be done using the [turbo-action=replace](https://turbo.hotwired.dev/handbook/frames#promoting-a-frame-navigation-to-a-page-visit).
 
-[Complete documentation for Warped::Controllers::Tabulatable::Ui](docs/views/TABULATABLE.md).
+[Complete documentation for Warped built-in Partials](docs/controllers/views/PARTIALS.md).
 ### Services
 
 The gem provides a `Warped::Service::Base` class that can be used to create services in a rails application.

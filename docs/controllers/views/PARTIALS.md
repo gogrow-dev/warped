@@ -1,4 +1,4 @@
-# Using Warped built in view partials
+# Using Warped built-in view partials
 
 In order to use the built in Warped view partials, you need to include the `Warped::Controllers::<WarpedConcern>::Ui` module in your controller.
 

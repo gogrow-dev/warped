@@ -34,6 +34,14 @@ Add the following to your `app/javascript/controllers/index.js`, bellow the `eag
 eagerLoadControllersFrom("warped/controllers", application)
 ```
 
+Include the css provided by the gem in your `app/views/layouts/application.html.erb`:
+```erb
+<%= stylesheet_link_tag "warped/base" %>
+<%= stylesheet_link_tag "warped/table" %>
+<%= stylesheet_link_tag "warped/search" %>
+<%= stylesheet_link_tag "warped/filters" %>
+<%= stylesheet_link_tag "warped/pagination" %>
+```
 
 ## Usage
 

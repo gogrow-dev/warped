@@ -214,6 +214,25 @@ end
 <% end %>
 ```
 
+## Styling the partials
+The partials are designed to be as unobtrusive as possible, and they can be styled using the classes passed as locals to the partials, or by modifying the partials css classes.
+
+The css classes are in the following files:
+– `app/assets/stylesheets/warped/base.css` - the base css variables
+- `app/assets/stylesheets/warped/filters.css` - the css classes for the filters partial
+- `app/assets/stylesheets/warped/pagination.css` - the css classes for the pagination partial
+- `app/assets/stylesheets/warped/search.css` - the css classes for the search partial
+- `app/assets/stylesheets/warped/table.css` - the css classes for the table partial
+
+You can override the css classes by adding the following to your css file:
+```css
+@import "warped/base.css";
+@import "warped/filters.css";
+@import "warped/pagination.css";
+@import "warped/search.css";
+@import "warped/table.css";
+```
+
 ## Moving logic from the view to the controller
 Using the "warped/_table" can introduce a lot of logic in the view. To move the logic to the controller, you can instantiate the Columns and Actions in the controller and use them in the view as instance variables.
 

@@ -15,6 +15,27 @@ Then run the generator to create the configuration file:
 
 The generator will create a file at `config/initializers/warped.rb` with the default configuration.
 
+### Installation for rails fullstack apps
+
+For using the views provided by the gem, your app will need to have the following:
+1. [rails/importmap-rails: Use ESM with importmap to manage modern JavaScript in Rails without transpiling or bundling.](https://github.com/rails/importmap-rails) configured
+2. [hotwired/stimulus-rails: Use Stimulus in your Ruby on Rails app](https://github.com/hotwired/stimulus-rails) configured
+
+Add the following to your `config/importmap.rb`:
+
+```ruby
+pin_all_from "app/javascript/controllers/warped", under: "controllers/warped"
+```
+
+>This will import all the stimulus controllers provided by the gem.
+
+Add the following to your `app/javascript/controllers/index.js`, bellow the `eagerLoadControllersFrom("controllers", application)`
+
+```javascript
+eagerLoadControllersFrom("warped/controllers", application)
+```
+
+
 ## Usage
 
 Warped provides utilities for making it easier to develop rails applications. The utilities are organized into modules and can be used by including the module in the class that needs the utility.
@@ -56,6 +77,8 @@ GET /users?name=John
 GET /users?email=john@example.com
 GET /users?created_at=2021-01-01
 ```
+> [!TIP]
+> It's highly recommended to use the type-safe filter methods provided by the gem. This prevents invalid queries from being executed on the database. See the [Filterable documentation](docs/controllers/FILTERABLE.md) for more information.
 
 [Complete documentation for Warped::Controllers::Filterable](docs/controllers/FILTERABLE.md).
 
@@ -113,6 +136,8 @@ class UsersController < ApplicationController
   end
 end
 ```
+> [!TIP]
+> It's highly recommended to use the type-safe sort methods provided by the gem. This prevents invalid queries from being executed on the database. See the [Sortable documentation](docs/controllers/SORTABLE.md) for more information.
 
 This will use the query parameter `sort_key` and `sort_direction` to sort the records.
 - The default sort direction is `desc`.
@@ -204,6 +229,78 @@ Just like `paginate`, when calling the `tabulate` method in the controller actio
 
 [Complete documentation for Warped::Controllers::Tabulatable](docs/controllers/TABULATABLE.md).
 
+### Views
+
+Warped comes with a set of partials and stimulus controllers that can be used to make development of index views easier/faster.
+
+In order to use the views provided by the gem, warped provides ::Ui modules for each of the before menttioned concerns. `These Warped::Controllers::<ConcernName>::Ui` provide the helper methods needed by the partials in order to work.
+
+The partials are:
+- `Warped::Controllers::Filterable::Ui` -> `warped/_filters.html.erb`
+- `Warped::Controllers::Searchable::Ui` -> `warped/_search.html.erb`
+- `Warped::Controllers::Pageable::Ui` -> `warped/_pagination.html.erb`
+- `Warped::Controllers::Tabulatable::Ui` -> `warped/_table.html.erb`
+
+Example:
+```ruby
+# app/models/user.rb
+class User < ApplicationRecord
+  # first_name :string
+  # last_name :string
+  # email :string
+  # created_at :datetime
+
+  scope :search, ->(query) { where('first_name LIKE ? OR last_name LIKE ? OR email LIKE ?', "%#{query}%", "%#{query}%", "%#{query}%") }
+
+end
+
+# app/controllers/users_controller.rb
+class UsersController < ApplicationControlelr
+  include Warped::Controllers::Tabulatable::Ui
+
+  tabulatable_by name: { kind: :string }, email: { kind: :string }, created_at: { kind: :date_time }
+
+  def index
+    @users = tabulate(User.all)
+  end
+
+  def show
+    @user = User.find(params[:id])
+  end
+
+  def destroy
+    User.find(params[:id]).destroy
+    redirect_to users_path
+  end
+end
+```
+
+```erb
+# app/views/users/index.html.erb
+<%= render "warped/table", collection: @users,
+                           path: users_path,
+                           columns: [
+                             Warped::Table::Column.new(:id, 'ID'),
+                             Warped::Table::Column.new(:full_name, 'Full Name', method: ->(user) { [user.first_name, user.last_name].compact_blank.join(" ") }),
+                             Warped::Table::Column.new(:email),
+                             Warped::Table::Column.new(:created_at, 'Created At', method: ->(user) { user.created_at.strftime('%Y-%m-%d') })
+                           ],
+                           actions: [
+                             Warped::Table::Action.new('Show', ->(user) { user_path(user) }),
+                             Warped::Table::Action.new('Delete', ->(user) { user_path(user) }, turbo_method: :delete, turbo_confirm: 'Are you sure?')
+                           ],
+                           turbo_action: :replace
+                          %>
+```
+The code above, renders a table with:
+- The columns `ID`, `Full Name`, `Email`, and `Created At`, all of which are sortable.
+- The actions `Show` and `Delete` for each user. The action `Delete` will use the `DELETE` method and will ask for confirmation before executing the action.
+- The filters for the `name`, `email`, and `created_at` fields.
+- A search input that will search the users by the term provided.
+- A pagination component that will paginate the users, showing 10 users per page by default.
+- The table filtering/sorting/searching/pagination will be done using the [turbo-action=replace](https://turbo.hotwired.dev/handbook/frames#promoting-a-frame-navigation-to-a-page-visit).
+
+[Complete documentation for Warped::Controllers::Tabulatable::Ui](docs/views/TABULATABLE.md).
 ### Services
 
 The gem provides a `Warped::Service::Base` class that can be used to create services in a rails application.

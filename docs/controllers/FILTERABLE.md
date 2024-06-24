@@ -23,6 +23,82 @@ GET /users?email=john@example.com
 GET /users?created_at=2021-01-01
 ```
 
+## Adding type-safety to the fields
+
+The `filterable_by` method, accepts keyword arguments to be passed. The keyword arguments are the field names and the type to cast the query parameter to. This is useful to prevent invalid queries from being executed on the database.
+
+```ruby
+class UsersController < ApplicationController
+  include Warped::Controllers::Filterable
+
+  filterable_by name: { kind: :string }, email: { kind: :string }, created_at: { kind: :date }
+
+  def index
+    users = filter(User.all)
+    render json: users
+  end
+end
+```
+
+When passing a value to the query parameter, the value will be cast to the specified type. If casting fails, the query parameter will be ignored.
+
+If the strict flag is passed to the filterable_by method, then it will raise a `Filter::ValueError`.
+
+```ruby
+class UsersController < ApplicationController
+  include Warped::Controllers::Filterable
+
+  filterable_by created_at: { kind: :date }, strict: true
+
+  def index
+    users = filter(User.all)
+    render json: users
+  end
+end
+```
+
+Request examples:
+```
+GET /users?created_at=2021-01-01 # returns users created at 2021-01-01
+GET /users?created_at=not_a_date # Raises a Filter::ValueError, with the message 'not_a_date' cannot be casted to date
+```
+
+## Handling invalid filter values in strict mode
+
+```ruby
+class UsersController < ApplicationController
+  include Warped::Controllers::Filterable
+
+  rescue_from Filter::ValueError, with: :render_invalid_filter_value
+  rescue_from Filter::RelationError, with: :render_invalid_filter_relation
+
+  filterable_by age: { kind: :integer }, strict: true
+
+  def index
+    users = filter(User.all)
+    render json: users
+  end
+
+  private
+
+  # default handler for invalid filter values
+  def render_invalid_filter_value(exception)
+    render json: { error: exception.message }, status: :bad_request
+  end
+
+  def render_invalid_filter_relation(exception)
+    render json: { error: exception.message }, status: :bad_request
+  end
+end
+```
+
+Request examples:
+```
+GET /users?age=18 # returns users with age 18
+GET /users?age=not_an_integer
+# returns a 400 (Bad Request), with the message "'not_an_integer' cannot be casted to integer"
+```
+
 ## Referencing tables in the filterable fields
 
 The `filterable_by` method can also be used to reference fields in associated tables. For example, to filter the users by the name of the company they work for, the following can be done:
@@ -31,7 +107,7 @@ The `filterable_by` method can also be used to reference fields in associated ta
 class UsersController < ApplicationController
   include Warped::Controllers::Filterable
 
-  filterable_by :name, :email, :created_at, 'companies.name'
+  filterable_by :name, 'companies.name', "companies.created_at" => { kind: :date_time }
 
   def index
     users = filter(User.joins(:company))
@@ -44,6 +120,7 @@ Request examples:
 ```
 GET /users?name=John
 GET /users?companies.name=Acme
+GET /users?companies.created_at=2021-01-01T00:00:00
 ```
 
 ## Renaming the filter query parameters
@@ -55,7 +132,9 @@ you can specify the query parameter to use for each field:
 class UsersController < ApplicationController
   include Warped::Controllers::Filterable
 
-  filterable_by 'companies.name' => :company_name, 'users.name' => :user_name
+  filterable_by 'companies.name' => { kind: :string, alias_name: :company_name },
+                'users.name' => { kind: :string, alias_name: :user_name }
+
 
   def index
     users = filter(User.join(:company))
@@ -78,7 +157,7 @@ By default, the `filter` method will use the `eq` filter method to filter the re
 class UsersController < ApplicationController
   include Warped::Controllers::Filterable
 
-  filterable_by :name, :age
+  filterable_by name: { kind: :string }, age: { kind: :integer }
 
   def index
     users = filter(User.all)

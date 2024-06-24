@@ -7,9 +7,10 @@ module Warped
   module Table
     class Column
       attr_reader :parameter_name, :method, :options
-      attr_accessor :filter, :sort
 
+      # @param parameter_name [String] The parameter name to be used by the column
       # @param display_name [String] The display name of the column
+      # @param method [String, Symbol, Proc] The method to be called on the record to get the content of the column
       def initialize(parameter_name, display_name = nil, method: nil, **options)
         @parameter_name = parameter_name
         @display_name = display_name

@@ -2,6 +2,7 @@
 
 require "active_support/concern"
 require "active_support/core_ext/class/attribute"
+require "active_support/core_ext/object/blank"
 
 module Warped
   module Controllers
@@ -35,7 +36,7 @@ module Warped
     #   class UsersController < ApplicationController
     #     include Sortable
     #
-    #     sortable_by :name, :created_at, 'accounts.referrals_count' => 'referrals'
+    #     sortable_by :name, :created_at, 'accounts.referrals_count' => { alias_name: 'referrals' }
     #
     #     def index
     #       scope = sort(User.joins(:account))
@@ -55,60 +56,79 @@ module Warped
       extend ActiveSupport::Concern
 
       included do
-        class_attribute :sort_fields, default: []
-        class_attribute :mapped_sort_fields, default: {}
-        class_attribute :default_sort_key, default: :id
-        class_attribute :default_sort_direction, default: :desc
+        class_attribute :sorts, default: []
+        class_attribute :default_sort, default: Sort.new("id")
+        class_attribute :default_sort_direction, default: "desc"
+
+        attr_reader :current_action_sorts
+
+        helper_method :current_action_sorts, :current_action_sort_value, :default_sort, :default_sort_direction
+
+        rescue_from Sort::DirectionError, with: :render_invalid_sort_direction
       end
 
       class_methods do
         # @param keys [Array<Symbol,String>]
         # @param mapped_keys [Hash<Symbol,String>]
         def sortable_by(*keys, **mapped_keys)
-          self.sort_fields = keys.map(&:to_s)
-          self.mapped_sort_fields = mapped_keys.with_indifferent_access
+          self.sorts = keys.map do |field|
+            Warped::Sort.new(field)
+          end
+
+          self.sorts += mapped_keys.map do |field, opts|
+            Warped::Sort.new(field, alias_name: opts[:alias_name])
+          end
+
+          return if self.sorts.any? { |sort| sort.name == default_sort.name }
+
+          self.sorts.push(default_sort)
         end
       end
 
       # @param scope [ActiveRecord::Relation] The scope to sort.
-      # @param sort_key [String, Symbol] The sort key.
-      # @param sort_direction [String, Symbol] The sort direction.
+      # @param sort_conditions [Array<Warped::Sort::Base>|nil] The sort conditions.
       # @return [ActiveRecord::Relation]
-      def sort(scope, sort_key: self.sort_key, sort_direction: self.sort_direction)
-        return scope unless sort_key && sort_direction
+      def sort(scope, sort_conditions: nil)
+        action_sorts = sort_conditions.presence || sorts
+        @current_action_sorts = action_sorts
 
-        validate_sort_key!
+        Queries::Sort.call(scope, sort_key: current_action_sort_value.name,
+                                  sort_direction: current_action_sort_value.direction)
+      end
 
-        Queries::Sort.call(scope, sort_key:, sort_direction:)
+      # @return [Warped::Sort::Value] The current sort value.
+      def current_action_sort_value
+        @current_action_sort_value ||= begin
+          sort_obj = current_action_sorts.find do |sort|
+            params[:sort_key] == sort.parameter_name
+          end
+
+          if sort_obj.present?
+            Sort::Value.new(sort_obj, params[:sort_direction] || default_sort_direction)
+          else
+            Sort::Value.new(default_sort, default_sort_direction)
+          end
+        end
       end
 
       protected
 
-      # @return [Symbol] The sort direction.
-      def sort_direction
-        @sort_direction ||= params[:sort_direction] || default_sort_direction
-      end
-
-      def sort_key
-        @sort_key ||= mapped_sort_fields.key(params[:sort_key]).presence ||
-                      params[:sort_key] ||
-                      default_sort_key.to_s
+      # @param exception [Sort::DirectionError]
+      def render_invalid_sort_direction(exception)
+        render json: { error: exception.message }, status: :bad_request
       end
 
       private
 
-      def validate_sort_key!
-        return if valid_sort_key?
+      # @return [Warped::Sort] The current sort object.
+      def current_sort
+        @current_sort ||= begin
+          sort_obj = sorts.find do |sort|
+            params[:sort_key] == sort.parameter_name
+          end
 
-        possible_values = sort_fields + mapped_sort_fields.values
-        message = "Invalid sort key: #{sort_key}, must be one of #{possible_values}"
-        raise ActionController::BadRequest, message
-      end
-
-      def valid_sort_key?
-        sort_key == default_sort_key.to_s ||
-          sort_fields.include?(sort_key) ||
-          mapped_sort_fields[sort_key].present?
+          sort_obj.presence || Warped::Sort.new(default_sort_key)
+        end
       end
     end
   end

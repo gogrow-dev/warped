@@ -1,0 +1,40 @@
+<%# locals: (form:, filter:) %>
+
+<% filter_value = current_action_filter_values.find { |v| v.filter.name == filter.name } %>
+
+<div class="warped-filters--filter <%= 'warped-filters--filter-inactive' if filter_value.blank? %>" data-controller="filter" data-filter-filter-outlet=".warped-filters--filter" data-filter-empty-class="warped-filters--filter-inactive" data-filter-collapsed-class="warped-filters--filter--panel-collapsed" data-action="keydown.esc@window->filter#close click@window->filter#clickOutside">
+  <div class="warped-filters--filter--icon" data-action="click->filter#toggle">
+    <% if !filter_value.nil? %>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+      </svg>
+    <% else %>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+      </svg>
+    <% end %>
+  </div>
+
+  <%= form.label filter.parameter_name, class: "warped-filters--filter--label" %>
+
+  <div data-filter-target="badgeValue" class="warped-filters--filter--value">
+    <span class="warped-filters--filter--value--values" data-filter-target="relation">
+      <%= filter_value&.relation if !filter_value&.empty? %>
+    </span>
+
+    <span class="warped-filters--filter--value--values" data-filter-target="value">
+      <%= ": #{filter_value&.value}" if !filter_value&.html_value.nil? %>
+    </span>
+  </div>
+
+  <div class="warped-filters--filter--panel-collapsed warped-filters--filter--panel" data-filter-target="panel">
+    <%= form.select "#{filter.parameter_name}.rel", options_for_select(filter.relations, include_blank: true, selected: filter_value&.relation), {}, class: "warped-filters--filter--panel--select", data: { filter_target: "relationInput", action: "change->filter#changeRelation" } %>
+    <%= tag :input, type: filter.html_type, name: filter.parameter_name, value: filter_value&.html_value, class: "warped-filters--filter--panel--input", data: { filter_target: "valueInput", action: "keyup->filter#changeValue" } %>
+
+    <span class="warped-filters--filter--panel--remove" data-action="click->filter#clear click->filter#close">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+      </svg>
+    </span>
+  </div>
+</div>

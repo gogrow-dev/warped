@@ -1,0 +1,23 @@
+:root {
+  /* colors */
+  --warped-base: white;
+  --warped-base-rgb: 255, 255, 255;
+
+  --warped-neutral: #1F2937;
+  --warped-neutral-rgb: 31, 41, 55;
+
+  --warped-neutral-content: #fbfbfb;
+  --warped-neutral-content-rgb: 251, 251, 251;
+
+  --warped-primary: #2563EB;
+  --warped-primary-rgb: 37, 99, 235;
+
+  --warped-primary-content: #fbfbfb;
+  --warped-primary-content-rgb: 251, 251, 251;
+
+  --warped-danger: #EF4444;
+  --warped-danger-rgb: 239, 68, 68;
+
+  /* roundness */
+  --warped-roundness: 0.5rem;
+}

@@ -28,5 +28,6 @@ loader = Zeitwerk::Loader.for_gem
 loader.ignore("#{__dir__}/generators")
 loader.ignore("lib/warped/railtie.rb") unless defined?(Rails::Railtie)
 loader.collapse("#{__dir__}/warped/emails/components")
+loader.collapse("#{__dir__}/warped/api")
 loader.setup
 loader.eager_load

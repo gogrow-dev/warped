@@ -1,0 +1,19 @@
+<%# locals: (form:, modules:) %>
+
+<% Array.wrap(modules).each do |module_name| %>
+  <% if module_name.to_sym == :searchable && try(:searched?) %>
+    <%= form.hidden_field search_param, value: search_term %>
+  <% elsif module_name.to_sym == :filterable && try(:filtered?) %>
+    <% filter_url_params.each do |key, value| %>
+      <%= form.hidden_field key, value: %>
+    <% end %>
+  <% elsif module_name.to_sym == :sortable && try(:sorted?) %>
+    <% sort_url_params.each do |key, value| %>
+      <%= form.hidden_field key, value: %>
+    <% end %>
+  <% elsif module_name.to_sym == :pageable && try(:paginated?) %>
+    <% paginate_url_params.each do |key, value| %>
+      <%= form.hidden_field key, value: %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "active_support/concern"
+require "active_support/core_ext/object/blank"
 
 module Warped
   module Controllers
@@ -11,46 +12,40 @@ module Warped
         include Sortable
 
         included do
-          helper_method :sorted?, :sort_url_params, :sort_key, :sort_direction
+          helper_method :attribute_name, :sorted?, :sorted_field?, :sortable_field?, :sort_url_params
         end
 
+        # @see Sortable#sort
         def sort(...)
           @sorted = true
 
           super
         end
 
+        # @param parameter_name [String]
+        # @return [Boolean]
+        def sorted_field?(parameter_name)
+          current_action_sort_value.parameter_name == parameter_name.to_s
+        end
+
+        # @param parameter_name [String]
+        # @return [Boolean] Whether the parameter_name is sortable.
+        def sortable_field?(parameter_name)
+          current_action_sorts.any? { |sort| sort.parameter_name == parameter_name.to_s }
+        end
+
+        # @return [Boolean] Whether the current action is sorted.
         def sorted?
           @sorted ||= false
         end
 
+        # @return [Hash] The sort_url_params
         def sort_url_params(**options)
-          url_params = { sort_key:, sort_direction: }
+          url_params = {
+            sort_key: current_action_sort_value.parameter_name,
+            sort_direction: current_action_sort_value.direction
+          }
           url_params.merge!(options)
-          url_params
-        end
-
-        def sorts
-          sort_fields + mapped_sort_fields.keys
-        end
-
-        def current_sorts
-          return [] unless params[:sort_key].present?
-
-          mapped_sort_field_param = mapped_sort_fields.value?(params[:sort_key]) ? params[:sort_key] : nil
-          sort_field_param = sort_fields.find do |field|
-            field == params[:sort_key]
-          end
-          param_sort_key = mapped_sort_field_param.presence || sort_field_param.presence
-
-          return [] unless param_sort_key.present?
-
-          [
-            {
-              key: param_sort_key,
-              value: sort_direction
-            }
-          ]
         end
       end
     end

@@ -25,7 +25,7 @@ module Warped
     # @see RELATIONS
     # To see the list of available relations, check the +RELATIONS+ constant.
     class Filter
-      RELATIONS = %w[eq neq gt gte lt lte between in not_in starts_with ends_with contains is_null is_not_null].freeze
+      RELATIONS = ::Warped::Filter::Base::RELATIONS.freeze
 
       # @param scope [ActiveRecord::Relation] the scope to filter
       # @param filter_conditions [Array<Hash>] the conditions to filter by
@@ -85,11 +85,11 @@ module Warped
         when "is_not_null"
           scope.where.not(field => nil)
         when "gt"
-          scope.where.not(field => ...value)
+          scope.where.not(field => ..value)
         when "gte"
           scope.where(field => value..)
         when "lt"
-          scope.where(field => ...value)
+          scope.where.not(field => value..)
         when "lte"
           scope.where(field => ..value)
         end

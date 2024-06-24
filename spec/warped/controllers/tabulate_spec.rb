@@ -35,7 +35,7 @@ RSpec.describe Warped::Controllers::Tabulatable, type: :controller do
 
       it "calls Warped::Queries::Sort with correct params" do
         request
-        expect(Warped::Queries::Sort).to have_received(:call).with(scope, sort_key: "id", sort_direction: :desc)
+        expect(Warped::Queries::Sort).to have_received(:call).with(scope, sort_key: "id", sort_direction: "desc")
       end
 
       it "calls Warped::Queries::Search with correct params" do
@@ -52,7 +52,8 @@ RSpec.describe Warped::Controllers::Tabulatable, type: :controller do
 
     context "when tabulate fields are defined" do
       before do
-        MockController.tabulatable_by :email, "users.created_at" => "signed_up_at", updated_at: "last_updated_at"
+        MockController.tabulatable_by :email, "users.created_at" => { alias_name: "signed_up_at" },
+                                              updated_at: { alias_name: "last_updated_at" }
       end
 
       let(:sort_direction) { %w[asc desc asc_nulls_first asc_nulls_last desc_nulls_first desc_nulls_last].sample }
@@ -83,15 +84,16 @@ RSpec.describe Warped::Controllers::Tabulatable, type: :controller do
         it "calls Warped::Queries::Sort with correct params" do
           request
           expect(Warped::Queries::Sort).to have_received(:call).with(scope, sort_key: "updated_at",
-                                                                            sort_direction: :desc)
+                                                                            sort_direction: "desc")
         end
       end
 
       context "when a non existing sort key is passed" do
         let(:params) { { sort_key: "non_existing_key" } }
 
-        it "raises an ActionController::BadRequest error" do
-          expect { request }.to raise_error(ActionController::BadRequest).with_message(anything)
+        it "returns the default sort key and sort_direction" do
+          request
+          expect(Warped::Queries::Sort).to have_received(:call).with(scope, sort_key: "id", sort_direction: "desc")
         end
       end
 
@@ -102,7 +104,7 @@ RSpec.describe Warped::Controllers::Tabulatable, type: :controller do
           request
           expect(Warped::Queries::Filter).to have_received(:call).with(scope,
                                                                        filter_conditions: [{
-                                                                         field: :email,
+                                                                         field: "email",
                                                                          relation: "eq",
                                                                          value: "john@sample.com"
                                                                        }])
@@ -138,7 +140,7 @@ RSpec.describe Warped::Controllers::Tabulatable, type: :controller do
           request
           expect(Warped::Queries::Filter).to have_received(:call).with(scope,
                                                                        filter_conditions: [{
-                                                                         field: :email,
+                                                                         field: "email",
                                                                          value: "john@sample.com",
                                                                          relation: "eq"
                                                                        }])

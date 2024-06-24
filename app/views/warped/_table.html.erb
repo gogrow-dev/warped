@@ -1,0 +1,52 @@
+<%# locals: (collection:, path:, columns:, turbo_action: :replace, actions: [], **options) %>
+
+
+<%= tag.div class: 'warped-table' do %>
+  <div class="warped-table--controls">
+    <% if controller.class.include?(Warped::Controllers::Searchable::Ui) %>
+      <%= render "warped/search", path:, turbo_action:, **(options[:search].presence || {}) %>
+    <% end %>
+
+    <% if controller.class.include?(Warped::Controllers::Filterable::Ui) %>
+      <%= render "warped/filters", path:, turbo_action:, **(options[:filters].presence || {}) %>
+    <% end %>
+  </div>
+
+
+
+  <% table_opts = options[:table]&.deep_dup.presence || {} %>
+  <% table_class = "warped-table--table #{table_opts.delete(:class)}" %>
+
+  <div class="warped-table--container">
+    <%= tag.div class: table_class, **table_opts do %>
+      <div class="warped-table--table--header">
+        <div class="warped-table--table--row">
+          <% columns.each do |column| %>
+            <%= render "warped/column", column:, path:, turbo_action: %>
+          <% end %>
+
+          <% if actions.any? %>
+            <div class="warped-table--table--cell">
+              Actions
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <div class="warped-table--table--row-group">
+        <div class="warped-table--table--empty-row">
+          <div class="warped-table--table--cell">
+            Whoops! Nothing over here!
+          </div>
+        </div>
+        <% if (block = yield).present? %>
+          <%= block %>
+        <% else %>
+          <% collection.each do |resource| %>
+            <%= render "warped/row", resource:, columns:, actions: %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  <%= render("warped/pagination", path:, turbo_action:, **(options[:pagination].presence || {})) if controller.class.include?(Warped::Controllers::Pageable::Ui) %>
+<% end %>

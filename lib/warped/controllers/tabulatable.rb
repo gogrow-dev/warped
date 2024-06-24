@@ -13,7 +13,7 @@ module Warped
     #   class UsersController < ApplicationController
     #     include Tabulatable
     #
-    #     tabulatable_by :name, :email, :age, 'posts.created_at', 'posts.id' => 'post_id'
+    #     tabulatable_by :email, :age, 'posts.created_at', 'posts.id' => { alias_name: 'post_id', kind: :integer }
     #
     #     def index
     #       users = User.left_joins(:posts).group(:id)
@@ -31,8 +31,8 @@ module Warped
     #   class PostsController < ApplicationController
     #     include Tabulatable
     #
-    #     tabulatable_by :title, :content, :created_at, user: 'users.name'
-    #     filterable_by :created_at, user: 'users.name'
+    #     tabulatable_by :title, :content, :created_at, user: { alias_name: 'users.name' }
+    #     filterable_by :created_at, user: { alias_name: 'users.name' }
     #
     #     def index
     #       posts = Post.left_joins(:user).group(:id)
@@ -50,16 +50,13 @@ module Warped
 
       included do
         class_attribute :tabulate_fields, default: []
-        class_attribute :mapped_tabulate_fields, default: []
+        class_attribute :mapped_tabulate_fields, default: {}
       end
 
       class_methods do
         def tabulatable_by(*keys, **mapped_keys)
-          self.tabulate_fields = keys
-          self.mapped_tabulate_fields = mapped_keys.to_a
-
-          filterable_by(*keys, **mapped_keys) if filter_fields.empty? && mapped_filter_fields.empty?
-          sortable_by(*keys, **mapped_keys) if sort_fields.empty? && mapped_sort_fields.empty?
+          filterable_by(*keys, **mapped_keys) if filters.empty?
+          sortable_by(*keys, **mapped_keys) if sorts.empty?
         end
       end
 

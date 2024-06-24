@@ -1,0 +1,74 @@
+.warped--pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  height: 2.5rem;
+}
+
+.warped--pagination--btn {
+  background-color: var(--warped-neutral);
+  color: var(--warped-neutral-content);
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 2.5rem;
+}
+
+.warped--pagination--btn button {
+  height: 100%;
+  width: 100%;
+}
+
+.warped--pagination--btn:not(:last-child) {
+  border-right: 1px solid var(--warped-neutral-content);
+}
+
+.warped--pagination--btn:first-child {
+  border-top-left-radius: var(--warped-roundness);
+  border-bottom-left-radius: var(--warped-roundness);
+  width: 7rem;
+}
+
+.warped--pagination--btn:last-child {
+  border-top-right-radius: var(--warped-roundness);
+  border-bottom-right-radius: var(--warped-roundness);
+  width: 7rem;
+}
+
+.warped--pagination--btn:hover {
+  background-color: var(--warped-primary);
+  color: var(--warped-primary-content);
+}
+
+.warped--pagination--btn-disabled {
+  background-color: var(--warped-neutral);
+  color: var(--warped-neutral-content);
+  padding: 0.25rem 0.5rem;
+  cursor: not-allowed;
+}
+
+.warped--pagination--btn-disabled:hover {
+  background-color: var(--warped-neutral);
+}
+
+.warped--pagination--btn-active {
+  background-color: var(--warped-primary);
+  color: var(--warped-primary-content);
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+.warped--pagination--btn-inactive {
+  background-color: var(--warped-neutral);
+  color: var(--warped-neutral-content);
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+.warped--pagination--btn-gap:hover {
+  background-color: var(--warped-neutral);
+  color: var(--warped-neutral-content);
+  cursor: not-allowed;
+}

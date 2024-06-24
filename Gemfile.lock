@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    warped (0.2.0)
-      rails (>= 6.0, < 8.0)
+    warped (1.0.0)
+      rails (>= 7.1, <= 8.0)
       zeitwerk (>= 2.4)
 
 GEM

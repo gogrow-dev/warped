@@ -21,6 +21,7 @@ Layout/LineLength:
 Metrics/AbcSize:
   Exclude:
     - "lib/warped/controllers/filterable/ui.rb"
+    - "lib/warped/controllers/pageable/ui.rb"
     - "lib/warped/controllers/sortable/ui.rb"
     - "lib/warped/emails/components/**/*.rb"
     - "lib/warped/queries/filter.rb"
@@ -34,8 +35,13 @@ Metrics/ParameterLists:
   Exclude:
     - "lib/warped/emails/components/**/*.rb"
 
+Metrics/PerceivedComplexity:
+  Exclude:
+    - "lib/warped/controllers/pageable/ui.rb"
+
 Metrics/CyclomaticComplexity:
   Exclude:
+    - "lib/warped/controllers/pageable/ui.rb"
     - "lib/warped/queries/filter.rb"
 
 Metrics/MethodLength:

@@ -10,57 +10,35 @@ module Warped
         include Filterable
 
         included do
-          helper_method :filters, :filtered?, :current_filters, :filter_url_params, :filterable_by
+          helper_method :filters, :filtered?, :filter_url_params, :filterable_by
         end
 
+        # @see Filterable#filter
         def filter(...)
           @filtered = true
 
           super
         end
 
+        # @return [Boolean] Whether the current action is filtered.
         def filtered?
           @filtered ||= false
         end
 
+        # @return [Hash] The filters for the current action.
         def filter_url_params(**options)
           url_params = {}
-          current_filters.each_with_object(url_params) do |filter, hsh|
-            if filter[:value].is_a?(Array)
-              filter[:value].each { |value| hsh["#{filter[:name]}[]"] = value }
+          current_action_filter_values.each_with_object(url_params) do |filter_value, hsh|
+            if filter_value.value.is_a?(Array)
+              filter_value.value.each { |value| hsh["#{filter_value.parameter_name}[]"] = value }
             else
-              hsh[filter[:name]] = filter[:value]
+              hsh[filter_value.parameter_name] = filter_value.value
             end
 
-            hsh["#{filter[:name]}.rel"] = filter[:relation]
+            hsh["#{filter_value.parameter_name}.rel"] = filter_value.relation
           end
 
-          url_params.tap { _1.merge!(options) }
-        end
-
-        def filters
-          (filter_fields | mapped_filter_fields).map do |field|
-            {
-              name: filter_mapped_name(field),
-              value: filter_value(field),
-              relation: filter_rel_value(field)
-            }
-          end
-        end
-
-        def current_filters
-          (filter_fields | mapped_filter_fields).filter_map do |field|
-            filter_value = filter_value(field)
-            filter_rel_value = filter_rel_value(field)
-
-            next if filter_value.blank? && %w[is_null is_not_null].exclude?(filter_rel_value)
-
-            {
-              name: filter_mapped_name(field),
-              value: filter_value,
-              relation: filter_rel_value
-            }
-          end
+          url_params.merge!(options)
         end
       end
     end

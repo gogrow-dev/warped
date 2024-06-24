@@ -112,7 +112,7 @@ module Warped
       #
       # @return [String,Integer] The number of records per page.
       def per_page
-        params[:per_page].presence || self.class.default_per_page
+        params[:per_page].presence || default_per_page
       end
 
       # Retrieves pagination metadata.

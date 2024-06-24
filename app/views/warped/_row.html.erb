@@ -1,0 +1,19 @@
+<%# locals: (resource:, columns:, path: nil, actions: nil) -%>
+
+<% element_tag = path.present? ? :a : :div %>
+
+<%= content_tag element_tag, **{ class: "warped-table--table--row" }.merge!(href: path).compact_blank do %>
+  <% if (block = yield).present? %>
+    <%= block %>
+  <% else %>
+    <% columns.each do |column| %>
+      <%= render "warped/cell" do %>
+        <%= column.content_for(resource) %>
+      <% end %>
+    <% end %>
+
+    <% if actions.present? %>
+      <%= render "warped/actions", actions:, resource: %>
+    <% end %>
+  <% end %>
+<% end %>

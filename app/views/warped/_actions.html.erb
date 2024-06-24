@@ -1,0 +1,9 @@
+<%# locals: (resource:, actions:[])%>
+
+<div class="warped-table--table--cell">
+  <% actions.each do |action| %>
+    <% opts = action.options.deep_dup %>
+    <% action_class = "warped-table--action #{opts.delete(:class)}" %>
+    <%= link_to (action.name(resource)), action.path(resource), class: action_class, **opts %>
+  <% end %>
+</div>

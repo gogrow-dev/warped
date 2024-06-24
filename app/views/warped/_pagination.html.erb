@@ -1,0 +1,34 @@
+<%# locals: (path:, turbo_action:, **options) %>
+
+<% opts = options.deep_dup %>
+<% pagination_class = "warped--pagination #{opts.delete(:class)}" %>
+
+<% uri = URI(path) %>
+
+<% html_form_options = {}.tap do |hash| %>
+  <% hash.merge!(sort_url_params) if try(:sorted?) %>
+  <% hash.merge!(filter_url_params) if try(:filtered?) %>
+  <% hash.merge!(search_url_params) if try(:searched?) %>
+<% end %>
+
+<%= tag.nav(class: pagination_class, role: "navigation", **opts) do %>
+  <% if pagination[:prev_page] -%> <%= button_to("Previous", path, { "data-turbo-action" => turbo_action, method: :get, form_class: "warped--pagination--btn", params: html_form_options.merge(page: pagination[:prev_page]) }) %>
+  <% else -%> <span class="warped--pagination--btn warped--pagination--btn-disabled" disabled>Previous</span>
+  <% end -%>
+
+  <% pagination[:series].each do |item| -%>
+    <% if    item.is_a?(Integer) -%> <%= button_to(item, path, { "data-turbo-action" => turbo_action, method: :get, form_class: "warped--pagination--btn warped--pagination--btn-inactive", params: html_form_options.merge(page: item) }) %>
+    <% elsif item.is_a?(String) -%> <span class="warped--pagination--btn warped--pagination--btn-active"><%= item %></span>
+    <% elsif item == :gap %>
+      <span class="warped--pagination--btn warped--pagination--btn-gap">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+        </svg>
+      </span>
+    <% end -%>
+  <% end -%>
+
+  <% if pagination[:next_page] -%>  <%= button_to("Next", path, { "data-turbo-action" => turbo_action, method: :get, form_class: "warped--pagination--btn", params: html_form_options.merge(page: pagination[:next_page]) }) %>
+  <% else -%>  <span class=" warped--pagination--btn warped--pagination--btn-disabled" disabled>Next</span>
+  <% end -%>
+<% end %>

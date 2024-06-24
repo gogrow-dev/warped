@@ -62,7 +62,7 @@ RSpec.describe Warped::Controllers::Filterable, type: :controller do
                                                                        filter_conditions: [
                                                                          {
                                                                            field: "users.created_at",
-                                                                           value: DateTime.new(2020, 1, 1),
+                                                                           value: Time.new(2020, 1, 1),
                                                                            relation: "gte"
                                                                          },
                                                                          {

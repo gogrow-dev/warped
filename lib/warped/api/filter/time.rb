@@ -12,6 +12,8 @@ module Warped
 
         ::Time.parse(value)
       rescue StandardError
+        raise ValueError, "#{value} cannot be casted to #{kind}" if strict
+
         nil
       end
 

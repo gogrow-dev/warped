@@ -48,9 +48,7 @@ module Warped
       def cast(value)
         return if value.nil?
 
-        cast(value).tap do |casted_value|
-          raise ValueError, "#{value} cannot be casted to #{kind}" if casted_value.nil? && strict
-        end
+        value
       end
 
       # @param relation [String] The validated filter relation.

@@ -10,18 +10,28 @@ module Warped
       def cast(value)
         return if value.blank?
 
-        case value
-        when ::Integer
-          value
-        when ::String
-          value.to_i if value.match?(/\A-?\d+\z/)
-        when ::Float, ::BigDecimal
-          value.to_i
-        end
+        casted_value = case value
+                       when ::Integer
+                         value
+                       when ::String
+                         value.to_i if value.match?(/\A-?\d+\z/)
+                       when ::Float, ::BigDecimal
+                         value.to_i
+                       end
+
+        check_casted_value!(casted_value)
       end
 
       def html_type
         "number"
+      end
+
+      private
+
+      def check_casted_value!(value)
+        raise ValueError, "#{value} cannot be casted to #{kind}" if value.nil? && strict
+
+        value
       end
     end
   end

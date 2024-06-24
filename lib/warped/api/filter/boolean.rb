@@ -8,13 +8,17 @@ module Warped
       def cast(value)
         return if value.nil?
 
-        case value
-        when true, false
-          value
-        when "true", "1", "t", 1
-          true
-        when "false", "0", "f", 0
-          false
+        casted_value = case value
+                       when true, false
+                         value
+                       when "true", "1", "t", 1
+                         true
+                       when "false", "0", "f", 0
+                         false
+                       end
+
+        casted_value.tap do |casted|
+          raise ValueError, "#{value} cannot be casted to #{kind}" if casted.nil? && strict
         end
       end
 

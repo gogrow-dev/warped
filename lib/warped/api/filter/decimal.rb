@@ -11,11 +11,15 @@ module Warped
       def cast(value)
         return if value.blank?
 
-        case value
-        when ::BigDecimal
-          value
-        when ::Integer, ::Float, ::String
-          value.to_d
+        casted_value = case value
+                       when ::BigDecimal
+                         value
+                       when ::Integer, ::Float, ::String
+                         value.to_d
+                       end
+
+        casted_value.tap do |casted|
+          raise ValueError, "#{value} cannot be casted to #{kind}" if casted.nil? && strict
         end
       end
 

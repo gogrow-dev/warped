@@ -13,6 +13,8 @@ module Warped
 
         ::DateTime.parse(value)
       rescue ::Date::Error
+        raise ValueError, "#{value} cannot be casted to #{kind}" if strict
+
         nil
       end
 

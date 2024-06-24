@@ -10,11 +10,7 @@ module Warped
       def cast(value)
         return if value.blank?
 
-        casted_value = value.to_s
-
-        casted_value.tap do |casted|
-          raise ValueError, "#{value} cannot be casted to #{kind}" if casted.nil? && strict
-        end
+        value.to_s
       rescue StandardError
         raise ValueError, "#{value} cannot be casted to #{kind}" if strict
 

@@ -99,7 +99,7 @@ module Warped
       # @return [Warped::Sort::Value] The current sort value.
       def current_action_sort_value
         @current_action_sort_value ||= begin
-          sort_obj = current_action_sorts.find do |sort|
+          sort_obj = Array.wrap(current_action_sorts).find do |sort|
             params[:sort_key] == sort.parameter_name
           end
 

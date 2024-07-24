@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Warped
-  module Emails
+  module Mailers
     module Layouts
       class Columns < Base
         variant do
@@ -24,7 +24,7 @@ module Warped
         def template
           tag.div(style:) do
             capture do
-              cols.map do |col|
+              cols.each do |col|
                 concat tag.div(col, style: style(:col))
               end
             end

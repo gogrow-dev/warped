@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Warped
-  module Emails
+  module Mailers
     class Button < Base
       variant do
         base do

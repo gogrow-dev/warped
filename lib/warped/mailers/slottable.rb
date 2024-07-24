@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Warped
-  module Emails
+  module Mailers
     module Slottable
       def self.included(base)
         base.extend(ClassMethods)
@@ -14,15 +14,25 @@ module Warped
             #   slots[:one][:header] = block
             # end
             #
+            # def header?
+            #   slots[:one][:header].present?
+            # end
+            #
             # def header
             #   capture(&slots[:one][:header]) if slots[:one][:header]
             # end
             def with_#{name}(&block)
               slots[:one][:#{name}] = block
+
+              nil
+            end
+
+            def #{name}?
+              !!slots[:one][:#{name}]
             end
 
             def #{name}
-              capture(&slots[:one][:#{name}]) if slots[:one][:#{name}]
+              capture(&slots[:one][:#{name}]) if #{name}?
             end
           RUBY
         end
@@ -42,6 +52,8 @@ module Warped
             def with_#{name.to_s.singularize}(&block)
               slots[:many][:#{name}] ||= []
               slots[:many][:#{name}] << block
+
+              nil
             end
 
             def #{name}

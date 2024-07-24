@@ -3,7 +3,7 @@
 require "active_support/concern"
 
 module Warped
-  module Emails
+  module Mailers
     module Helpers
       extend ActiveSupport::Concern
 

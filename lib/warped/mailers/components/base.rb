@@ -4,7 +4,7 @@ require "active_support/core_ext/module/delegation"
 require "action_view/helpers"
 
 module Warped
-  module Emails
+  module Mailers
     ##
     # Base class for all email components
     #
@@ -111,6 +111,8 @@ module Warped
         @content_block = capture { block.call(self) } if block_given?
         template
       end
+
+      # alias h helpers
     end
   end
 end

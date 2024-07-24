@@ -1,18 +1,15 @@
 # frozen_string_literal: true
 
 module Warped
-  module Emails
+  module Mailers
     class Stepper < Base
-      variant do
-        base { "padding: 20px;" }
-      end
-
       variant :step do
         base do
           ["border-radius: 100%;", "width: #{width}%",
            "max-width: #{max_width}px", "height: #{height}px",
            "text-align: center", "line-height: #{height}px",
-           "display: inline-block", "font-size: #{height / 2}px"]
+           "display: inline-block", "font-size: #{height / 2}px",
+           "border: 1px solid #007bff"]
         end
 
         state do

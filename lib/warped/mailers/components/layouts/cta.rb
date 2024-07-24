@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 module Warped
-  module Emails
+  module Mailers
     module Layouts
       class Cta < Base
         variant :card do
           base do
             [
               "border-collapse: unset", "width: 100%", "border-spacing: 0",
-              "border-radius: 8px", "border: 2px solid #ddd", "padding: 20px"
+              "border-radius: 5px", "border: 2px solid #ddd", "padding: 20px"
             ]
           end
         end

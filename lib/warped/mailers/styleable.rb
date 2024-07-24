@@ -6,7 +6,7 @@ require "active_support/core_ext/module/delegation"
 require "active_support/core_ext/object/deep_dup"
 
 module Warped
-  module Emails
+  module Mailers
     module Styleable
       def self.included(base)
         base.extend(ClassMethods)

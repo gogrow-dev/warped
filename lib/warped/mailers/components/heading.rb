@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
 module Warped
-  module Emails
+  module Mailers
     class Heading < Base
       variant do
-        base { ["font-weight: 400"] }
+        base { ["font-weight: 400", "text-wrap: wrap"] }
 
         level do
-          h1 { ["font-size: 45px", "line-height: 50px"] }
-          h2 { ["font-size: 40px", "line-height: 45px"] }
-          h3 { ["font-size: 35px", "line-height: 40px"] }
-          h4 { ["font-size: 30px", "line-height: 35px"] }
-          h5 { ["font-size: 25px", "line-height: 30px"] }
-          h6 { ["font-size: 20px", "line-height: 25px"] }
+          h1 { ["font-size: 45px", "line-height: 50px", "margin-top: 20px", "margin-bottom: 20px", "font-weight: 700"] }
+          h2 { ["font-size: 40px", "line-height: 45px", "margin-top: 20px", "margin-bottom: 20px", "font-weight: 700"] }
+          h3 { ["font-size: 35px", "line-height: 40px", "margin-top: 20px", "margin-bottom: 20px", "font-weight: 700"] }
+          h4 { ["font-size: 30px", "line-height: 35px", "margin-top: 20px", "margin-bottom: 20px", "font-weight: 700"] }
+          h5 { ["font-size: 25px", "line-height: 30px", "margin-top: 20px", "margin-bottom: 20px", "font-weight: 700"] }
+          h6 { ["font-size: 20px", "line-height: 25px", "margin-top: 20px", "margin-bottom: 20px", "font-weight: 700"] }
         end
 
         align do

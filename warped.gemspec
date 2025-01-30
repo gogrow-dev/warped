@@ -28,6 +28,6 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "rails", ">= 7.1.0", "<= 8.0"
+  spec.add_dependency "rails", ">= 7.1.0"
   spec.add_dependency "zeitwerk", ">= 2.4"
 end
